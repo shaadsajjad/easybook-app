@@ -27,6 +27,11 @@ abstract final class AppConstants {
   static const int chatMessageMaxLength = 500;
   static const int chatHistoryLimit = 10;
 
+  // The public demo account seeded on the backend (see docs/API.md,
+  // "Demo credentials"). Shown as a one-tap shortcut on the login screen.
+  static const String demoEmail = 'demo@example.com';
+  static const String demoPassword = 'Demo1234';
+
   // Currency shown next to prices (Bangladeshi Taka).
   static const String currencySymbol = '৳';
 }

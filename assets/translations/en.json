@@ -57,5 +57,38 @@
     "password_same": "New password must be different from the current password",
     "password_mismatch": "Passwords don't match",
     "phone_invalid": "Enter a valid phone number (7–20 digits, may start with +)"
+  },
+  "splash": {
+    "waking_up": "Waking up the server…",
+    "waking_up_hint": "The first start can take up to a minute.",
+    "error_title": "We couldn't connect"
+  },
+  "auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Log in to book and manage your services.",
+    "register_title": "Create your account",
+    "register_subtitle": "Join EasyBook and book local services in seconds.",
+    "name_label": "Full name",
+    "name_hint": "Ayesha Rahman",
+    "email_label": "Email",
+    "email_hint": "you@example.com",
+    "password_label": "Password",
+    "password_hint": "Enter your password",
+    "new_password_hint": "Create a password",
+    "confirm_password_label": "Confirm password",
+    "confirm_password_hint": "Type the password again",
+    "password_rules": "At least 8 characters, with a letter and a number.",
+    "login_button": "Log in",
+    "register_button": "Create account",
+    "no_account": "New to EasyBook?",
+    "go_register": "Create an account",
+    "have_account": "Already have an account?",
+    "go_login": "Log in",
+    "demo_button": "Use the demo account",
+    "session_expired": "Your session has ended. Please log in again.",
+    "logout": "Log out",
+    "logout_confirm_title": "Log out?",
+    "logout_confirm_message": "You'll need to log in again to see your bookings.",
+    "language": "Language"
   }
 }

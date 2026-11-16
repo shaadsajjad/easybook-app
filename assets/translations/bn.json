@@ -57,5 +57,38 @@
     "password_same": "নতুন পাসওয়ার্ড বর্তমান পাসওয়ার্ড থেকে আলাদা হতে হবে",
     "password_mismatch": "পাসওয়ার্ড দুটি মিলছে না",
     "phone_invalid": "সঠিক ফোন নম্বর দিন (৭–২০ সংখ্যা, শুরুতে + থাকতে পারে)"
+  },
+  "splash": {
+    "waking_up": "সার্ভার চালু হচ্ছে…",
+    "waking_up_hint": "প্রথমবার চালু হতে এক মিনিট পর্যন্ত লাগতে পারে।",
+    "error_title": "সংযোগ করা যায়নি"
+  },
+  "auth": {
+    "login_title": "আবার স্বাগতম",
+    "login_subtitle": "সেবা বুক ও পরিচালনা করতে লগ ইন করুন।",
+    "register_title": "আপনার অ্যাকাউন্ট খুলুন",
+    "register_subtitle": "EasyBook-এ যোগ দিন, মুহূর্তেই স্থানীয় সেবা বুক করুন।",
+    "name_label": "পুরো নাম",
+    "name_hint": "আয়েশা রহমান",
+    "email_label": "ইমেইল",
+    "email_hint": "you@example.com",
+    "password_label": "পাসওয়ার্ড",
+    "password_hint": "আপনার পাসওয়ার্ড দিন",
+    "new_password_hint": "একটি পাসওয়ার্ড তৈরি করুন",
+    "confirm_password_label": "পাসওয়ার্ড নিশ্চিত করুন",
+    "confirm_password_hint": "পাসওয়ার্ডটি আবার লিখুন",
+    "password_rules": "কমপক্ষে ৮ অক্ষর, একটি অক্ষর ও একটি সংখ্যাসহ।",
+    "login_button": "লগ ইন",
+    "register_button": "অ্যাকাউন্ট খুলুন",
+    "no_account": "EasyBook-এ নতুন?",
+    "go_register": "অ্যাকাউন্ট খুলুন",
+    "have_account": "আগে থেকেই অ্যাকাউন্ট আছে?",
+    "go_login": "লগ ইন",
+    "demo_button": "ডেমো অ্যাকাউন্ট ব্যবহার করুন",
+    "session_expired": "আপনার সেশন শেষ হয়েছে। আবার লগ ইন করুন।",
+    "logout": "লগ আউট",
+    "logout_confirm_title": "লগ আউট করবেন?",
+    "logout_confirm_message": "আপনার বুকিং দেখতে আবার লগ ইন করতে হবে।",
+    "language": "ভাষা"
   }
 }
