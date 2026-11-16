@@ -1,4 +1,5 @@
 import 'package:easybook_app/core/error/failures.dart';
+import 'package:easybook_app/features/services/domain/entities/availability.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/domain/entities/service_filter.dart';
 import 'package:easybook_app/features/services/domain/entities/services_page.dart';
@@ -18,4 +19,10 @@ abstract interface class ServicesRepository {
   Future<Either<Failure, List<String>>> getCategories();
 
   Future<Either<Failure, Service>> getServiceById(String id);
+
+  /// Every slot of [date] ("yyyy-MM-dd", business time zone).
+  Future<Either<Failure, Availability>> getAvailability({
+    required String serviceId,
+    required String date,
+  });
 }

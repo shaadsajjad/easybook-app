@@ -44,6 +44,11 @@ abstract final class AppSizes {
   static const double featuredCardHeight = 212;
   static const double detailImageHeight = 320;
   static const double chipRowHeight = 48;
+
+  // Booking.
+  static const double dayChipWidth = 64;
+  static const double slotChipMinWidth = 96;
+  static const double confirmationIcon = 88;
 }
 
 /// Width limits so pages look right on tablets.

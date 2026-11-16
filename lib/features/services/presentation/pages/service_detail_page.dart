@@ -54,7 +54,10 @@ class ServiceDetailView extends StatelessWidget {
             body: ServiceDetailContent(service: service),
             bottomNavigationBar: BookNowBar(
               price: service.price,
-              onBook: () => context.push(AppRoutes.bookServicePath(service.id)),
+              onBook: () => context.push(
+                AppRoutes.bookServicePath(service.id),
+                extra: service,
+              ),
             ),
           );
         }

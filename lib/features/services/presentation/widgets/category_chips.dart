@@ -6,8 +6,8 @@ import 'package:easybook_app/features/services/presentation/bloc/services_bloc.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// "All" plus one chip per category. Hidden until categories load; if
-/// they fail, the list still works without them.
+/// "All" plus one chip per category. Space is reserved while they load;
+/// if they fail, the row is hidden and the list still works without it.
 class CategoryChips extends StatelessWidget {
   const new({required this.horizontalPadding, super.key});
 
@@ -15,13 +15,18 @@ class CategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categories = context.select<CategoriesCubit, List<String>>(
-      (cubit) => cubit.state.categories,
-    );
+    final categoriesState = context.watch<CategoriesCubit>().state;
+    final categories = categoriesState.categories;
     final selected = context.select<ServicesBloc, String?>(
       (bloc) => bloc.state.filter.category,
     );
-    if (categories.isEmpty) return const SizedBox.shrink();
+    if (categories.isEmpty) {
+      // Keep the row's space while loading so the page doesn't jump.
+      final isLoading =
+          categoriesState.status == CategoriesStatus.initial ||
+          categoriesState.status == CategoriesStatus.loading;
+      return SizedBox(height: isLoading ? AppSizes.chipRowHeight : 0);
+    }
 
     final options = <String?>[null, ...categories];
     return SizedBox(

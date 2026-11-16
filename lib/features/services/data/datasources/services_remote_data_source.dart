@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:easybook_app/core/constants/api_endpoints.dart';
 import 'package:easybook_app/core/constants/app_constants.dart';
 import 'package:easybook_app/core/network/api_envelope.dart';
+import 'package:easybook_app/features/services/data/models/availability_model.dart';
 import 'package:easybook_app/features/services/data/models/pagination_meta_model.dart';
 import 'package:easybook_app/features/services/data/models/service_model.dart';
 import 'package:easybook_app/features/services/domain/entities/service_filter.dart';
@@ -45,5 +46,16 @@ class ServicesRemoteDataSource {
   Future<ServiceModel> getServiceById(String id) async {
     final response = await _dio.get<Object?>(ApiEndpoints.serviceById(id));
     return ServiceModel.fromJson(ApiEnvelope.dataAsMap(response.data));
+  }
+
+  Future<AvailabilityModel> getAvailability({
+    required String serviceId,
+    required String date,
+  }) async {
+    final response = await _dio.get<Object?>(
+      ApiEndpoints.availability(serviceId),
+      queryParameters: {'date': date},
+    );
+    return AvailabilityModel.fromJson(ApiEnvelope.dataAsMap(response.data));
   }
 }
