@@ -50,38 +50,42 @@ class ServiceDetailContent extends StatelessWidget {
                 ],
                 Text(service.name, style: context.textTheme.headlineMedium),
                 const SizedBox(height: AppSpacing.xl),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _FactTile(
-                        icon: Icons.schedule_rounded,
-                        label: LocaleKeys.services_detail_duration.tr(),
-                        value: DurationFormatter.format(
-                          service.durationMinutes,
-                          locale,
+                // Same height for all three tiles, even when one wraps.
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: _FactTile(
+                          icon: Icons.schedule_rounded,
+                          label: LocaleKeys.services_detail_duration.tr(),
+                          value: DurationFormatter.format(
+                            service.durationMinutes,
+                            locale,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _FactTile(
-                        icon: Icons.payments_outlined,
-                        label: LocaleKeys.services_detail_price.tr(),
-                        value: PriceFormatter.format(
-                          service.price,
-                          locale: locale,
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _FactTile(
+                          icon: Icons.payments_outlined,
+                          label: LocaleKeys.services_detail_price.tr(),
+                          value: PriceFormatter.format(
+                            service.price,
+                            locale: locale,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _FactTile(
-                        icon: Icons.category_outlined,
-                        label: LocaleKeys.services_detail_category.tr(),
-                        value: service.category,
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _FactTile(
+                          icon: Icons.category_outlined,
+                          label: LocaleKeys.services_detail_category.tr(),
+                          value: service.category,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 Text(

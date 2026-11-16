@@ -133,5 +133,37 @@
     "not_found_title": "সেবাটি পাওয়া যাচ্ছে না",
     "not_found_message": "এই সেবাটি সম্ভবত আর দেওয়া হচ্ছে না।",
     "back_home": "হোমে ফিরে যান"
+  },
+  "booking": {
+    "title": "সময় বেছে নিন",
+    "pick_date": "তারিখ বেছে নিন",
+    "pick_time": "সময় বেছে নিন",
+    "today": "আজ",
+    "local_time_note": "সময়গুলো আপনার ফোনের টাইম জোনে দেখানো হয়েছে।",
+    "no_slots_title": "এই দিনে কোনো সময় খালি নেই",
+    "no_slots_message": "অন্য একটি তারিখ বেছে নিন।",
+    "slots_error": "সময়গুলো লোড করা যায়নি।",
+    "notes_label": "নোট (ঐচ্ছিক)",
+    "notes_hint": "আমাদের কিছু জানাতে চান? যেমন: পাশে ছোট করে দেবেন।",
+    "choose_time_first": "এগোতে একটি সময় বেছে নিন",
+    "selected_time": "{date} · {time}",
+    "confirm": "বুকিং নিশ্চিত করুন",
+    "unavailable_slot": "{time}, খালি নেই",
+    "confirmed_title": "বুকিং হয়ে গেছে!",
+    "confirmed_subtitle": "আপনার বুকিং অপেক্ষমাণ আছে। আমার বুকিং-এ এটি দেখতে পাবেন।",
+    "view_bookings": "আমার বুকিং দেখুন",
+    "back_home": "হোমে ফিরে যান",
+    "detail_date": "তারিখ",
+    "detail_time": "সময়",
+    "detail_duration": "সময়কাল",
+    "detail_price": "দাম",
+    "detail_notes": "নোট",
+    "detail_reference": "বুকিং আইডি"
+  },
+  "appointments": {
+    "status_pending": "অপেক্ষমাণ",
+    "status_confirmed": "নিশ্চিত",
+    "status_cancelled": "বাতিল",
+    "status_completed": "সম্পন্ন"
   }
 }

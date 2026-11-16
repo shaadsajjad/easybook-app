@@ -4,6 +4,11 @@ import 'package:easybook_app/core/network/auth_interceptor.dart';
 import 'package:easybook_app/core/network/dio_client.dart';
 import 'package:easybook_app/core/network/session_expiry_notifier.dart';
 import 'package:easybook_app/core/storage/token_storage.dart';
+import 'package:easybook_app/features/appointments/data/datasources/appointments_remote_data_source.dart';
+import 'package:easybook_app/features/appointments/data/repositories/appointments_repository_impl.dart';
+import 'package:easybook_app/features/appointments/domain/repositories/appointments_repository.dart';
+import 'package:easybook_app/features/appointments/domain/usecases/create_appointment.dart';
+import 'package:easybook_app/features/appointments/presentation/bloc/booking_cubit.dart';
 import 'package:easybook_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:easybook_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:easybook_app/features/auth/domain/repositories/auth_repository.dart';
@@ -20,6 +25,7 @@ import 'package:easybook_app/features/auth/presentation/bloc/splash_cubit.dart';
 import 'package:easybook_app/features/services/data/datasources/services_remote_data_source.dart';
 import 'package:easybook_app/features/services/data/repositories/services_repository_impl.dart';
 import 'package:easybook_app/features/services/domain/repositories/services_repository.dart';
+import 'package:easybook_app/features/services/domain/usecases/get_availability.dart';
 import 'package:easybook_app/features/services/domain/usecases/get_categories.dart';
 import 'package:easybook_app/features/services/domain/usecases/get_featured_services.dart';
 import 'package:easybook_app/features/services/domain/usecases/get_service_by_id.dart';
@@ -39,7 +45,8 @@ void configureDependencies(AppConfig config) {
   _registerCore(config);
   _registerAuth();
   _registerServices();
-  // Appointments, profile and AI are added in their own steps.
+  _registerAppointments();
+  // Profile and AI are added in their own steps.
 }
 
 void _registerCore(AppConfig config) {
@@ -102,8 +109,23 @@ void _registerServices() {
     ..registerLazySingleton(() => GetFeaturedServices(getIt()))
     ..registerLazySingleton(() => GetCategories(getIt()))
     ..registerLazySingleton(() => GetServiceById(getIt()))
+    ..registerLazySingleton(() => GetAvailability(getIt()))
     ..registerFactory(() => ServicesBloc(getServices: getIt()))
     ..registerFactory(() => FeaturedServicesCubit(getFeaturedServices: getIt()))
     ..registerFactory(() => CategoriesCubit(getCategories: getIt()))
     ..registerFactory(() => ServiceDetailCubit(getServiceById: getIt()));
+}
+
+void _registerAppointments() {
+  getIt
+    ..registerLazySingleton<AppointmentsRemoteDataSource>(
+      () => AppointmentsRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<AppointmentsRepository>(
+      () => AppointmentsRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton(() => CreateAppointment(getIt()))
+    ..registerFactory(
+      () => BookingCubit(getAvailability: getIt(), createAppointment: getIt()),
+    );
 }

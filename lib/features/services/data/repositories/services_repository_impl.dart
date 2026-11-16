@@ -1,6 +1,7 @@
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/network/request_guard.dart';
 import 'package:easybook_app/features/services/data/datasources/services_remote_data_source.dart';
+import 'package:easybook_app/features/services/domain/entities/availability.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/domain/entities/service_filter.dart';
 import 'package:easybook_app/features/services/domain/entities/services_page.dart';
@@ -51,6 +52,20 @@ class ServicesRepositoryImpl implements ServicesRepository {
   Future<Either<Failure, Service>> getServiceById(String id) {
     return guardRequest(() async {
       final model = await _remote.getServiceById(id);
+      return model.toEntity();
+    });
+  }
+
+  @override
+  Future<Either<Failure, Availability>> getAvailability({
+    required String serviceId,
+    required String date,
+  }) {
+    return guardRequest(() async {
+      final model = await _remote.getAvailability(
+        serviceId: serviceId,
+        date: date,
+      );
       return model.toEntity();
     });
   }

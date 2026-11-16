@@ -133,5 +133,37 @@
     "not_found_title": "Service not available",
     "not_found_message": "This service may no longer be offered.",
     "back_home": "Back to home"
+  },
+  "booking": {
+    "title": "Book a time",
+    "pick_date": "Pick a date",
+    "pick_time": "Pick a time",
+    "today": "Today",
+    "local_time_note": "Times are shown in your phone's time zone.",
+    "no_slots_title": "No times left on this day",
+    "no_slots_message": "Try another date.",
+    "slots_error": "We couldn't load the times.",
+    "notes_label": "Notes (optional)",
+    "notes_hint": "Anything we should know? For example: short on the sides, please.",
+    "choose_time_first": "Choose a time to continue",
+    "selected_time": "{date} · {time}",
+    "confirm": "Confirm booking",
+    "unavailable_slot": "{time}, unavailable",
+    "confirmed_title": "You're booked!",
+    "confirmed_subtitle": "Your booking is pending. You can follow it in My Bookings.",
+    "view_bookings": "View my bookings",
+    "back_home": "Back to home",
+    "detail_date": "Date",
+    "detail_time": "Time",
+    "detail_duration": "Duration",
+    "detail_price": "Price",
+    "detail_notes": "Notes",
+    "detail_reference": "Booking ID"
+  },
+  "appointments": {
+    "status_pending": "Pending",
+    "status_confirmed": "Confirmed",
+    "status_cancelled": "Cancelled",
+    "status_completed": "Completed"
   }
 }

@@ -4,6 +4,9 @@ import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
 import 'package:easybook_app/core/router/go_router_refresh_stream.dart';
 import 'package:easybook_app/core/router/placeholder_page.dart';
+import 'package:easybook_app/features/appointments/domain/entities/appointment.dart';
+import 'package:easybook_app/features/appointments/presentation/pages/booking_confirmation_page.dart';
+import 'package:easybook_app/features/appointments/presentation/pages/booking_page.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/pages/login_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/register_page.dart';
@@ -161,14 +164,23 @@ GoRouter createAppRouter(AuthBloc authBloc) {
       GoRoute(
         path: AppRoutes.bookService,
         name: AppRouteNames.bookService,
-        builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_book_service.tr()),
+        builder: (context, state) => BookingPage(
+          serviceId: state.pathParameters[AppRoutes.idParam] ?? '',
+          initial: switch (state.extra) {
+            final Service service => service,
+            _ => null,
+          },
+        ),
       ),
       GoRoute(
         path: AppRoutes.bookingConfirmation,
         name: AppRouteNames.bookingConfirmation,
+        // Opened with the created booking as `extra`. Without it (for
+        // example a restored deep link) there is nothing to show.
+        redirect: (context, state) =>
+            state.extra is Appointment ? null : AppRoutes.bookings,
         builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_booking_confirmation.tr()),
+            BookingConfirmationPage(appointment: state.extra! as Appointment),
       ),
     ],
   );
