@@ -1,6 +1,7 @@
-import 'package:easybook_app/app/app.dart';
 import 'package:easybook_app/bootstrap.dart';
+import 'package:easybook_app/core/config/app_config.dart';
+import 'package:easybook_app/core/config/flavor.dart';
 
 Future<void> main() async {
-  await bootstrap(() => const App());
+  await bootstrap(AppConfig.forFlavor(Flavor.production));
 }

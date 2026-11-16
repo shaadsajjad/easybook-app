@@ -5,9 +5,12 @@ the route table, the BLoC state shapes and the design direction (including the a
 
 ## 0. Toolchain notes (found in the scaffold)
 
-- Flutter 3.47.5 / Dart 3.13. The template already uses Dart 3.13 syntax (`const new(...)` primary constructors)
-  and imports widgets from `package:material_ui/material_ui.dart` (the Material library moved out of the SDK).
-  We follow the template's style instead of fighting it.
+- Flutter 3.47.5 / Dart 3.13. The lints require Dart 3.13 constructor syntax (`const new(...)`), applied with `dart fix`.
+- Material library: the template imported `package:material_ui/material_ui.dart`, but go_router, easy_localization
+  and flutter_localizations all use the SDK's `package:flutter/material.dart`. Two Material libraries mean two
+  different `MaterialApp`/`Theme` types (broken page transitions and missing localizations), so the app uses
+  `package:flutter/material.dart` everywhere and `material_ui` was removed from pubspec.
+- Kotlin was bumped from 2.2.10 to 2.2.20 (the minimum this Flutter version accepts for Android builds).
 - `bloc_lint` is in the template. We keep it: `dart run bloc_tools:bloc lint .` must also stay clean.
 - No image tool is needed for the logo: a small Python script (`tool/generate_icons.py`, Pillow) draws the icon
   and writes every Android and iOS icon size. No new Dart dependency (flutter_launcher_icons is not needed).
@@ -73,10 +76,13 @@ pill-shaped chips and buttons, 52dp tall buttons and inputs.
 
 **App logo:** a rounded-square (squircle) icon filled with the brand gradient. Inside, a white calendar
 (two binder rings on top) and a bold coral check mark where the date grid would be: "booked, easy".
-Generated at 1024px by `tool/generate_icons.py`, written to:
-- Android: `mipmap-*/ic_launcher.png` + adaptive icon (gradient background layer, white/coral foreground layer)
+Each flavor has its own background so test installs are easy to tell apart: production indigo -> violet,
+staging dark slate, development teal -> green. Generated at 1024px by `tool/generate_icons.py`, written to:
+- Android: `mipmap-*/ic_launcher.png` + adaptive icon (gradient background, vector foreground, themed-icon monochrome)
+  and the launch screen (brand color + glyph)
 - iOS: `ios/Runner/Assets.xcassets/AppIcon.appiconset/*` (full-bleed, no transparency, as Apple requires)
-- `assets/images/logo.png` for the splash and login screens.
+- iOS launch screen (brand color + glyph). Inside the app the logo is drawn in code (`core/widgets/app_logo.dart`),
+  so no image asset is needed.
 
 ## 3. Failure hierarchy (`core/error/failures.dart`)
 

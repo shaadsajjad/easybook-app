@@ -3,7 +3,7 @@ include:
   - package:bloc_lint/recommended.yaml
 analyzer:
   exclude:
-    - lib/l10n/gen/*
+    - lib/**.g.dart
     - build/**
     - android/**
     - ios/**
