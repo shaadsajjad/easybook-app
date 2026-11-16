@@ -9,6 +9,9 @@ import 'package:easybook_app/features/auth/presentation/pages/login_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/register_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/splash_page.dart';
 import 'package:easybook_app/features/auth/presentation/widgets/logout_button.dart';
+import 'package:easybook_app/features/services/domain/entities/service.dart';
+import 'package:easybook_app/features/services/presentation/pages/home_page.dart';
+import 'package:easybook_app/features/services/presentation/pages/service_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -76,8 +79,7 @@ GoRouter createAppRouter(AuthBloc authBloc) {
               GoRoute(
                 path: AppRoutes.home,
                 name: AppRouteNames.home,
-                builder: (context, state) =>
-                    PlaceholderPage(title: LocaleKeys.nav_home.tr()),
+                builder: (context, state) => const HomePage(),
               ),
             ],
           ),
@@ -147,8 +149,14 @@ GoRouter createAppRouter(AuthBloc authBloc) {
       GoRoute(
         path: AppRoutes.serviceDetail,
         name: AppRouteNames.serviceDetail,
-        builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_service_detail.tr()),
+        builder: (context, state) => ServiceDetailPage(
+          serviceId: state.pathParameters[AppRoutes.idParam] ?? '',
+          // The tapped card passes its service so the page shows at once.
+          initial: switch (state.extra) {
+            final Service service => service,
+            _ => null,
+          },
+        ),
       ),
       GoRoute(
         path: AppRoutes.bookService,

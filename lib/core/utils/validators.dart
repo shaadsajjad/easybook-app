@@ -91,4 +91,15 @@ abstract final class Validators {
     }
     return null;
   }
+
+  /// An optional amount of money (price filter). Empty is fine.
+  static String? optionalAmount(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) return null;
+    final amount = double.tryParse(text);
+    if (amount == null || amount < 0) {
+      return LocaleKeys.services_price_invalid.tr();
+    }
+    return null;
+  }
 }

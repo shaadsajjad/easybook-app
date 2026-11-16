@@ -17,6 +17,17 @@ import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/register_cubit.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/splash_cubit.dart';
+import 'package:easybook_app/features/services/data/datasources/services_remote_data_source.dart';
+import 'package:easybook_app/features/services/data/repositories/services_repository_impl.dart';
+import 'package:easybook_app/features/services/domain/repositories/services_repository.dart';
+import 'package:easybook_app/features/services/domain/usecases/get_categories.dart';
+import 'package:easybook_app/features/services/domain/usecases/get_featured_services.dart';
+import 'package:easybook_app/features/services/domain/usecases/get_service_by_id.dart';
+import 'package:easybook_app/features/services/domain/usecases/get_services.dart';
+import 'package:easybook_app/features/services/presentation/bloc/categories_cubit.dart';
+import 'package:easybook_app/features/services/presentation/bloc/featured_services_cubit.dart';
+import 'package:easybook_app/features/services/presentation/bloc/service_detail_cubit.dart';
+import 'package:easybook_app/features/services/presentation/bloc/services_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -27,7 +38,8 @@ final GetIt getIt = GetIt.instance;
 void configureDependencies(AppConfig config) {
   _registerCore(config);
   _registerAuth();
-  // Services, appointments, profile and AI are added in their own steps.
+  _registerServices();
+  // Appointments, profile and AI are added in their own steps.
 }
 
 void _registerCore(AppConfig config) {
@@ -76,4 +88,22 @@ void _registerAuth() {
     ..registerFactory(() => SplashCubit(wakeServer: getIt()))
     ..registerFactory(() => LoginCubit(login: getIt()))
     ..registerFactory(() => RegisterCubit(register: getIt()));
+}
+
+void _registerServices() {
+  getIt
+    ..registerLazySingleton<ServicesRemoteDataSource>(
+      () => ServicesRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<ServicesRepository>(
+      () => ServicesRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton(() => GetServices(getIt()))
+    ..registerLazySingleton(() => GetFeaturedServices(getIt()))
+    ..registerLazySingleton(() => GetCategories(getIt()))
+    ..registerLazySingleton(() => GetServiceById(getIt()))
+    ..registerFactory(() => ServicesBloc(getServices: getIt()))
+    ..registerFactory(() => FeaturedServicesCubit(getFeaturedServices: getIt()))
+    ..registerFactory(() => CategoriesCubit(getCategories: getIt()))
+    ..registerFactory(() => ServiceDetailCubit(getServiceById: getIt()));
 }

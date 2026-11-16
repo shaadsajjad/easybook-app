@@ -1,9 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_router.dart';
-import 'package:easybook_app/core/router/placeholder_page.dart';
 import 'package:easybook_app/core/theme/app_theme.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easybook_app/features/services/presentation/bloc/categories_cubit.dart';
+import 'package:easybook_app/features/services/presentation/bloc/featured_services_cubit.dart';
+import 'package:easybook_app/features/services/presentation/bloc/services_bloc.dart';
+import 'package:easybook_app/features/services/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,10 +17,37 @@ import '../../helpers/auth_fixtures.dart';
 
 class _MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc;
 
+class _MockServicesBloc extends MockBloc<ServicesEvent, ServicesState>
+    implements ServicesBloc;
+
+class _MockFeaturedCubit extends MockCubit<FeaturedServicesState>
+    implements FeaturedServicesCubit;
+
+class _MockCategoriesCubit extends MockCubit<CategoriesState>
+    implements CategoriesCubit;
+
+/// Home needs its blocs from get_it; register idle mocks.
+void _registerHomeMocks() {
+  final services = _MockServicesBloc();
+  final featured = _MockFeaturedCubit();
+  final categories = _MockCategoriesCubit();
+  when(() => services.state).thenReturn(const ServicesState());
+  when(() => featured.state).thenReturn(const FeaturedServicesState());
+  when(featured.load).thenAnswer((_) async {});
+  when(() => categories.state).thenReturn(const CategoriesState());
+  when(categories.load).thenAnswer((_) async {});
+  getIt
+    ..registerFactory<ServicesBloc>(() => services)
+    ..registerFactory<FeaturedServicesCubit>(() => featured)
+    ..registerFactory<CategoriesCubit>(() => categories);
+}
+
 void main() {
   testWidgets('a logged-in user lands on Home and can switch tabs', (
     tester,
   ) async {
+    _registerHomeMocks();
+    addTearDown(getIt.reset);
     final authBloc = _MockAuthBloc();
     when(() => authBloc.state).thenReturn(AuthState.authenticated(tUser));
     final router = createAppRouter(authBloc);
@@ -27,7 +58,7 @@ void main() {
         child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.byType(NavigationBar), findsOneWidget);
     expect(router.state.matchedLocation, '/home');
@@ -45,9 +76,10 @@ void main() {
           matching: find.text(label),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       expect(router.state.matchedLocation, path);
     }
-    expect(find.byType(PlaceholderPage), findsWidgets);
+    expect(find.byType(HomePage), findsOneWidget);
   });
 }

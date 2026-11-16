@@ -12,7 +12,9 @@ extension BuildContextX on BuildContext {
       Theme.of(this).extension<AppPalette>() ?? AppPalette.light;
 
   /// The active language code ("en" or "bn"), for intl formatting.
-  String get localeName => locale.languageCode;
+  /// Read from Flutter's Localizations (kept in sync by easy_localization),
+  /// so widgets also work in tests without EasyLocalization.
+  String get localeName => Localizations.localeOf(this).languageCode;
 
   void showSnackBar(String message) {
     ScaffoldMessenger.of(this)

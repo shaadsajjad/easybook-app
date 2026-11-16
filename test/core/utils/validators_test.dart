@@ -112,4 +112,23 @@ void main() {
       );
     });
   });
+
+  group('Validators.optionalAmount', () {
+    test('accepts empty and non-negative numbers', () {
+      expect(Validators.optionalAmount(''), isNull);
+      expect(Validators.optionalAmount('0'), isNull);
+      expect(Validators.optionalAmount('1250.5'), isNull);
+    });
+
+    test('rejects text and negative numbers', () {
+      expect(
+        Validators.optionalAmount('abc'),
+        LocaleKeys.services_price_invalid,
+      );
+      expect(
+        Validators.optionalAmount('-5'),
+        LocaleKeys.services_price_invalid,
+      );
+    });
+  });
 }
