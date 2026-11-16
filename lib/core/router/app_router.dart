@@ -13,7 +13,9 @@ import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/pages/login_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/register_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/splash_page.dart';
-import 'package:easybook_app/features/auth/presentation/widgets/logout_button.dart';
+import 'package:easybook_app/features/profile/presentation/pages/change_password_page.dart';
+import 'package:easybook_app/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:easybook_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/presentation/pages/home_page.dart';
 import 'package:easybook_app/features/services/presentation/pages/service_detail_page.dart';
@@ -127,27 +129,19 @@ GoRouter createAppRouter(AuthBloc authBloc) {
               GoRoute(
                 path: AppRoutes.profile,
                 name: AppRouteNames.profile,
-                // Step 7 replaces this with the real profile page.
-                builder: (context, state) => PlaceholderPage(
-                  title: LocaleKeys.nav_profile.tr(),
-                  actions: const [LogoutButton()],
-                ),
+                builder: (context, state) => const ProfilePage(),
                 routes: [
                   GoRoute(
                     path: AppRoutes.editProfile,
                     name: AppRouteNames.editProfile,
                     parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => PlaceholderPage(
-                      title: LocaleKeys.pages_edit_profile.tr(),
-                    ),
+                    builder: (context, state) => const EditProfilePage(),
                   ),
                   GoRoute(
                     path: AppRoutes.changePassword,
                     name: AppRouteNames.changePassword,
                     parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => PlaceholderPage(
-                      title: LocaleKeys.pages_change_password.tr(),
-                    ),
+                    builder: (context, state) => const ChangePasswordPage(),
                   ),
                 ],
               ),

@@ -22,6 +22,7 @@ class AppTextField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.validator,
     this.errorText,
+    this.helperText,
     this.maxLength,
     this.maxLines = 1,
     this.autofillHints,
@@ -42,6 +43,9 @@ class AppTextField extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final FormFieldValidator<String>? validator;
   final String? errorText;
+
+  /// A permanent hint under the field (for example "Email can't be changed").
+  final String? helperText;
   final int? maxLength;
   final int maxLines;
   final Iterable<String>? autofillHints;
@@ -83,6 +87,8 @@ class _AppTextFieldState extends State<AppTextField> {
           decoration: InputDecoration(
             hintText: widget.hint,
             errorText: widget.errorText,
+            helperText: widget.helperText,
+            helperMaxLines: 2,
             prefixIcon: widget.prefixIcon == null
                 ? null
                 : Icon(widget.prefixIcon, size: AppSizes.iconMd),

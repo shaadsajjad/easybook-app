@@ -189,4 +189,37 @@ abstract class LocaleKeys {
       'appointments.not_found_message';
   static const appointments_back_to_bookings = 'appointments.back_to_bookings';
   static const appointments = 'appointments';
+  static const profile_title = 'profile.title';
+  static const profile_account_section = 'profile.account_section';
+  static const profile_preferences_section = 'profile.preferences_section';
+  static const profile_edit_profile = 'profile.edit_profile';
+  static const profile_edit_profile_subtitle = 'profile.edit_profile_subtitle';
+  static const profile_change_password = 'profile.change_password';
+  static const profile_change_password_subtitle =
+      'profile.change_password_subtitle';
+  static const profile_language = 'profile.language';
+  static const profile_language_english = 'profile.language_english';
+  static const profile_language_bengali = 'profile.language_bengali';
+  static const profile_no_phone = 'profile.no_phone';
+  static const profile_member_since = 'profile.member_since';
+  static const profile_logout_subtitle = 'profile.logout_subtitle';
+  static const profile_name_label = 'profile.name_label';
+  static const profile_email_label = 'profile.email_label';
+  static const profile_email_locked = 'profile.email_locked';
+  static const profile_phone_label = 'profile.phone_label';
+  static const profile_phone_hint = 'profile.phone_hint';
+  static const profile_save = 'profile.save';
+  static const profile_profile_updated = 'profile.profile_updated';
+  static const profile_current_password_label =
+      'profile.current_password_label';
+  static const profile_current_password_hint = 'profile.current_password_hint';
+  static const profile_new_password_label = 'profile.new_password_label';
+  static const profile_new_password_hint = 'profile.new_password_hint';
+  static const profile_confirm_password_label =
+      'profile.confirm_password_label';
+  static const profile_confirm_password_hint = 'profile.confirm_password_hint';
+  static const profile_password_rules = 'profile.password_rules';
+  static const profile_update_password = 'profile.update_password';
+  static const profile_password_changed = 'profile.password_changed';
+  static const profile = 'profile';
 }

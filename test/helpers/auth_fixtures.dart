@@ -27,4 +27,12 @@ final User tRenamedUser = User(
   createdAt: tUser.createdAt,
 );
 
+/// A user who has not added a phone number.
+final User tRenamedUserWithoutPhone = User(
+  id: tUser.id,
+  name: 'New Name',
+  email: tUser.email,
+  createdAt: tUser.createdAt,
+);
+
 const String tToken = 'header.payload.signature';
