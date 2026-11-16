@@ -28,6 +28,13 @@ import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/register_cubit.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/splash_cubit.dart';
+import 'package:easybook_app/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:easybook_app/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:easybook_app/features/profile/domain/repositories/profile_repository.dart';
+import 'package:easybook_app/features/profile/domain/usecases/change_password.dart';
+import 'package:easybook_app/features/profile/domain/usecases/update_profile.dart';
+import 'package:easybook_app/features/profile/presentation/bloc/change_password_cubit.dart';
+import 'package:easybook_app/features/profile/presentation/bloc/edit_profile_cubit.dart';
 import 'package:easybook_app/features/services/data/datasources/services_remote_data_source.dart';
 import 'package:easybook_app/features/services/data/repositories/services_repository_impl.dart';
 import 'package:easybook_app/features/services/domain/repositories/services_repository.dart';
@@ -52,7 +59,8 @@ void configureDependencies(AppConfig config) {
   _registerAuth();
   _registerServices();
   _registerAppointments();
-  // Profile and AI are added in their own steps.
+  _registerProfile();
+  // The AI assistant is added in its own step.
 }
 
 void _registerCore(AppConfig config) {
@@ -150,4 +158,18 @@ void _registerAppointments() {
         cancelAppointment: getIt(),
       ),
     );
+}
+
+void _registerProfile() {
+  getIt
+    ..registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton(() => UpdateProfile(getIt()))
+    ..registerLazySingleton(() => ChangePassword(getIt()))
+    ..registerFactory(() => EditProfileCubit(updateProfile: getIt()))
+    ..registerFactory(() => ChangePasswordCubit(changePassword: getIt()));
 }
