@@ -57,3 +57,14 @@ final Availability tAvailability = Availability(
   date: '2026-11-20',
   slots: [tSlot(3), tSlot(4, available: false), tSlot(5)],
 );
+
+/// [tAppointment] with another status.
+Appointment tAppointmentWith(AppointmentStatus status) => Appointment(
+  id: tAppointment.id,
+  startTime: tAppointment.startTime,
+  endTime: tAppointment.endTime,
+  status: status,
+  notes: tAppointment.notes,
+  createdAt: tAppointment.createdAt,
+  service: tAppointment.service,
+);

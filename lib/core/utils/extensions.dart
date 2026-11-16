@@ -3,6 +3,7 @@ import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/theme/app_palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 extension BuildContextX on BuildContext {
   ThemeData get theme => Theme.of(this);
@@ -10,6 +11,13 @@ extension BuildContextX on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
   AppPalette get palette =>
       Theme.of(this).extension<AppPalette>() ?? AppPalette.light;
+
+  /// Status bar icons that stay readable on the page background (dark icons
+  /// in light mode). Pages with a gradient header use the light style.
+  SystemUiOverlayStyle get pageOverlayStyle =>
+      Theme.of(this).brightness == Brightness.dark
+      ? SystemUiOverlayStyle.light
+      : SystemUiOverlayStyle.dark;
 
   /// The active language code ("en" or "bn"), for intl formatting.
   /// Read from Flutter's Localizations (kept in sync by easy_localization),

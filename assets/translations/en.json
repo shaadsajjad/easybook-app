@@ -164,6 +164,26 @@
     "status_pending": "Pending",
     "status_confirmed": "Confirmed",
     "status_cancelled": "Cancelled",
-    "status_completed": "Completed"
+    "status_completed": "Completed",
+    "title": "My bookings",
+    "subtitle": "Your appointments, all in one place.",
+    "tab_upcoming": "Upcoming",
+    "tab_past": "Past",
+    "empty_upcoming_title": "No upcoming bookings",
+    "empty_upcoming_message": "When you book a service, it shows up here.",
+    "browse_services": "Browse services",
+    "empty_past_title": "No past bookings yet",
+    "empty_past_message": "Completed and cancelled bookings show up here.",
+    "detail_title": "Booking",
+    "cancel_button": "Cancel booking",
+    "cancel_confirm_title": "Cancel this booking?",
+    "cancel_confirm_message": "{service} on {date} at {time}. This can't be undone.",
+    "keep_booking": "Keep booking",
+    "confirm_cancel": "Yes, cancel",
+    "cancelled_message": "Booking cancelled",
+    "cannot_cancel_note": "Only pending bookings can be cancelled in the app.",
+    "not_found_title": "Booking not found",
+    "not_found_message": "It may have been removed.",
+    "back_to_bookings": "Back to my bookings"
   }
 }

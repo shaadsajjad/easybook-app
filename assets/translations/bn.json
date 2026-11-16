@@ -164,6 +164,26 @@
     "status_pending": "অপেক্ষমাণ",
     "status_confirmed": "নিশ্চিত",
     "status_cancelled": "বাতিল",
-    "status_completed": "সম্পন্ন"
+    "status_completed": "সম্পন্ন",
+    "title": "আমার বুকিং",
+    "subtitle": "আপনার সব অ্যাপয়েন্টমেন্ট এক জায়গায়।",
+    "tab_upcoming": "আসন্ন",
+    "tab_past": "আগের",
+    "empty_upcoming_title": "কোনো আসন্ন বুকিং নেই",
+    "empty_upcoming_message": "কোনো সেবা বুক করলে তা এখানে দেখাবে।",
+    "browse_services": "সেবা দেখুন",
+    "empty_past_title": "এখনও আগের কোনো বুকিং নেই",
+    "empty_past_message": "সম্পন্ন ও বাতিল বুকিং এখানে দেখাবে।",
+    "detail_title": "বুকিং",
+    "cancel_button": "বুকিং বাতিল করুন",
+    "cancel_confirm_title": "এই বুকিং বাতিল করবেন?",
+    "cancel_confirm_message": "{service}, {date}, {time}। এটি আর ফেরানো যাবে না।",
+    "keep_booking": "বুকিং রাখুন",
+    "confirm_cancel": "হ্যাঁ, বাতিল করুন",
+    "cancelled_message": "বুকিং বাতিল হয়েছে",
+    "cannot_cancel_note": "অ্যাপে শুধু অপেক্ষমাণ বুকিং বাতিল করা যায়।",
+    "not_found_title": "বুকিং পাওয়া যায়নি",
+    "not_found_message": "এটি সম্ভবত সরিয়ে ফেলা হয়েছে।",
+    "back_to_bookings": "আমার বুকিং-এ ফিরে যান"
   }
 }
