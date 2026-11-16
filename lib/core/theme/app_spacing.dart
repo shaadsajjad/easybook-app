@@ -37,6 +37,13 @@ abstract final class AppSizes {
   static const double borderThin = 1;
   static const double borderThick = 1.5;
   static const double progressStroke = 2.5;
+
+  // Service cards.
+  static const double serviceThumb = 96;
+  static const double featuredCardWidth = 272;
+  static const double featuredCardHeight = 212;
+  static const double detailImageHeight = 320;
+  static const double chipRowHeight = 48;
 }
 
 /// Width limits so pages look right on tablets.
