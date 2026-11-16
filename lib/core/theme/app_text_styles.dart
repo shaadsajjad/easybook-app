@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// The type scale. Headlines are bold with slightly tight letter spacing;
-/// body text is relaxed. The platform font is used (Roboto / San Francisco),
+/// The type scale. Headlines are heavy; body text is relaxed.
+/// No negative letter spacing: it makes Bengali letters overlap. The platform font is used (Roboto / San Francisco),
 /// which also renders Bengali correctly.
 abstract final class AppTextStyles {
   static TextTheme textTheme({
@@ -10,26 +10,13 @@ abstract final class AppTextStyles {
     required Color secondary,
   }) {
     final theme = base.copyWith(
-      displaySmall: base.displaySmall?.copyWith(
-        fontWeight: FontWeight.w800,
-        letterSpacing: -0.8,
-      ),
-      headlineLarge: base.headlineLarge?.copyWith(
-        fontWeight: FontWeight.w800,
-        letterSpacing: -0.6,
-      ),
+      displaySmall: base.displaySmall?.copyWith(fontWeight: FontWeight.w800),
+      headlineLarge: base.headlineLarge?.copyWith(fontWeight: FontWeight.w800),
       headlineMedium: base.headlineMedium?.copyWith(
         fontWeight: FontWeight.w800,
-        letterSpacing: -0.5,
       ),
-      headlineSmall: base.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.3,
-      ),
-      titleLarge: base.titleLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.2,
-      ),
+      headlineSmall: base.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+      titleLarge: base.titleLarge?.copyWith(fontWeight: FontWeight.w700),
       titleMedium: base.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       titleSmall: base.titleSmall?.copyWith(fontWeight: FontWeight.w600),
       bodyLarge: base.bodyLarge?.copyWith(height: 1.5),

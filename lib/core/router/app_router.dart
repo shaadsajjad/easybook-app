@@ -2,7 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/app/shell/app_shell.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
+import 'package:easybook_app/core/router/go_router_refresh_stream.dart';
 import 'package:easybook_app/core/router/placeholder_page.dart';
+import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:easybook_app/features/auth/presentation/pages/login_page.dart';
+import 'package:easybook_app/features/auth/presentation/pages/register_page.dart';
+import 'package:easybook_app/features/auth/presentation/pages/splash_page.dart';
+import 'package:easybook_app/features/auth/presentation/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,35 +16,56 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
 
+/// Where to send the user for a given session [status] and [location].
+/// Returns null to stay. Kept as a plain function so it is easy to test.
+///
+/// - Still checking the token: stay on the splash screen.
+/// - Logged out: only login and register are allowed.
+/// - Logged in: never show splash, login or register.
+String? resolveAuthRedirect({
+  required AuthStatus status,
+  required String location,
+}) {
+  final onSplash = location == AppRoutes.splash;
+  final onAuthPage =
+      location == AppRoutes.login || location == AppRoutes.register;
+
+  return switch (status) {
+    AuthStatus.unknown => onSplash ? null : AppRoutes.splash,
+    AuthStatus.unauthenticated => onAuthPage ? null : AppRoutes.login,
+    AuthStatus.authenticated => onSplash || onAuthPage ? AppRoutes.home : null,
+  };
+}
+
 /// The app's routes.
 ///
 /// Tabs live in a [StatefulShellRoute] so each tab keeps its own history.
 /// Detail screens use the root navigator, so they cover the bottom bar.
-///
-/// Step 3 (auth) adds the `redirect` driven by AuthBloc and makes /splash
-/// the initial location.
-GoRouter createAppRouter() {
+/// The router re-checks [resolveAuthRedirect] every time [authBloc] emits.
+GoRouter createAppRouter(AuthBloc authBloc) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.splash,
+    refreshListenable: GoRouterRefreshStream(authBloc.stream),
+    redirect: (context, state) => resolveAuthRedirect(
+      status: authBloc.state.status,
+      location: state.matchedLocation,
+    ),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         name: AppRouteNames.splash,
-        builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_splash.tr()),
+        builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: AppRoutes.login,
         name: AppRouteNames.login,
-        builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_login.tr()),
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: AppRoutes.register,
         name: AppRouteNames.register,
-        builder: (context, state) =>
-            PlaceholderPage(title: LocaleKeys.pages_register.tr()),
+        builder: (context, state) => const RegisterPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -89,8 +116,11 @@ GoRouter createAppRouter() {
               GoRoute(
                 path: AppRoutes.profile,
                 name: AppRouteNames.profile,
-                builder: (context, state) =>
-                    PlaceholderPage(title: LocaleKeys.nav_profile.tr()),
+                // Step 7 replaces this with the real profile page.
+                builder: (context, state) => PlaceholderPage(
+                  title: LocaleKeys.nav_profile.tr(),
+                  actions: const [LogoutButton()],
+                ),
                 routes: [
                   GoRoute(
                     path: AppRoutes.editProfile,

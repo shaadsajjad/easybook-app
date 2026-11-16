@@ -6,14 +6,15 @@ import 'package:flutter/material.dart';
 /// Temporary screen for routes whose feature is built in a later step.
 /// Each step replaces its placeholders with the real pages.
 class PlaceholderPage extends StatelessWidget {
-  const new({required this.title, super.key});
+  const new({required this.title, this.actions, super.key});
 
   final String title;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(title), actions: actions),
       body: EmptyView(
         icon: Icons.construction_rounded,
         title: title,
