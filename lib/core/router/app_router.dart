@@ -6,7 +6,9 @@ import 'package:easybook_app/core/router/go_router_refresh_stream.dart';
 import 'package:easybook_app/core/router/placeholder_page.dart';
 import 'package:easybook_app/features/appointments/domain/entities/appointment.dart';
 import 'package:easybook_app/features/appointments/presentation/pages/booking_confirmation_page.dart';
+import 'package:easybook_app/features/appointments/presentation/pages/booking_detail_page.dart';
 import 'package:easybook_app/features/appointments/presentation/pages/booking_page.dart';
+import 'package:easybook_app/features/appointments/presentation/pages/my_bookings_page.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/pages/login_page.dart';
 import 'package:easybook_app/features/auth/presentation/pages/register_page.dart';
@@ -91,15 +93,19 @@ GoRouter createAppRouter(AuthBloc authBloc) {
               GoRoute(
                 path: AppRoutes.bookings,
                 name: AppRouteNames.bookings,
-                builder: (context, state) =>
-                    PlaceholderPage(title: LocaleKeys.nav_bookings.tr()),
+                builder: (context, state) => const MyBookingsPage(),
                 routes: [
                   GoRoute(
                     path: AppRoutes.bookingDetail,
                     name: AppRouteNames.bookingDetail,
                     parentNavigatorKey: _rootNavigatorKey,
-                    builder: (context, state) => PlaceholderPage(
-                      title: LocaleKeys.pages_booking_detail.tr(),
+                    builder: (context, state) => BookingDetailPage(
+                      appointmentId:
+                          state.pathParameters[AppRoutes.idParam] ?? '',
+                      initial: switch (state.extra) {
+                        final Appointment appointment => appointment,
+                        _ => null,
+                      },
                     ),
                   ),
                 ],

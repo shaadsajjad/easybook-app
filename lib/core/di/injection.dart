@@ -7,8 +7,14 @@ import 'package:easybook_app/core/storage/token_storage.dart';
 import 'package:easybook_app/features/appointments/data/datasources/appointments_remote_data_source.dart';
 import 'package:easybook_app/features/appointments/data/repositories/appointments_repository_impl.dart';
 import 'package:easybook_app/features/appointments/domain/repositories/appointments_repository.dart';
+import 'package:easybook_app/features/appointments/domain/usecases/cancel_appointment.dart';
 import 'package:easybook_app/features/appointments/domain/usecases/create_appointment.dart';
+import 'package:easybook_app/features/appointments/domain/usecases/get_appointment_by_id.dart';
+import 'package:easybook_app/features/appointments/domain/usecases/get_appointments.dart';
+import 'package:easybook_app/features/appointments/domain/usecases/watch_appointment_changes.dart';
 import 'package:easybook_app/features/appointments/presentation/bloc/booking_cubit.dart';
+import 'package:easybook_app/features/appointments/presentation/bloc/booking_detail_cubit.dart';
+import 'package:easybook_app/features/appointments/presentation/bloc/my_bookings_cubit.dart';
 import 'package:easybook_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:easybook_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:easybook_app/features/auth/domain/repositories/auth_repository.dart';
@@ -125,7 +131,23 @@ void _registerAppointments() {
       () => AppointmentsRepositoryImpl(getIt()),
     )
     ..registerLazySingleton(() => CreateAppointment(getIt()))
+    ..registerLazySingleton(() => GetAppointments(getIt()))
+    ..registerLazySingleton(() => GetAppointmentById(getIt()))
+    ..registerLazySingleton(() => CancelAppointment(getIt()))
+    ..registerLazySingleton(() => WatchAppointmentChanges(getIt()))
     ..registerFactory(
       () => BookingCubit(getAvailability: getIt(), createAppointment: getIt()),
+    )
+    ..registerFactory(
+      () => MyBookingsCubit(
+        getAppointments: getIt(),
+        watchAppointmentChanges: getIt(),
+      ),
+    )
+    ..registerFactory(
+      () => BookingDetailCubit(
+        getAppointmentById: getIt(),
+        cancelAppointment: getIt(),
+      ),
     );
 }

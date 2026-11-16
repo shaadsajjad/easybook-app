@@ -160,5 +160,33 @@ abstract class LocaleKeys {
   static const appointments_status_confirmed = 'appointments.status_confirmed';
   static const appointments_status_cancelled = 'appointments.status_cancelled';
   static const appointments_status_completed = 'appointments.status_completed';
+  static const appointments_title = 'appointments.title';
+  static const appointments_subtitle = 'appointments.subtitle';
+  static const appointments_tab_upcoming = 'appointments.tab_upcoming';
+  static const appointments_tab_past = 'appointments.tab_past';
+  static const appointments_empty_upcoming_title =
+      'appointments.empty_upcoming_title';
+  static const appointments_empty_upcoming_message =
+      'appointments.empty_upcoming_message';
+  static const appointments_browse_services = 'appointments.browse_services';
+  static const appointments_empty_past_title = 'appointments.empty_past_title';
+  static const appointments_empty_past_message =
+      'appointments.empty_past_message';
+  static const appointments_detail_title = 'appointments.detail_title';
+  static const appointments_cancel_button = 'appointments.cancel_button';
+  static const appointments_cancel_confirm_title =
+      'appointments.cancel_confirm_title';
+  static const appointments_cancel_confirm_message =
+      'appointments.cancel_confirm_message';
+  static const appointments_keep_booking = 'appointments.keep_booking';
+  static const appointments_confirm_cancel = 'appointments.confirm_cancel';
+  static const appointments_cancelled_message =
+      'appointments.cancelled_message';
+  static const appointments_cannot_cancel_note =
+      'appointments.cannot_cancel_note';
+  static const appointments_not_found_title = 'appointments.not_found_title';
+  static const appointments_not_found_message =
+      'appointments.not_found_message';
+  static const appointments_back_to_bookings = 'appointments.back_to_bookings';
   static const appointments = 'appointments';
 }
