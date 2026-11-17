@@ -49,7 +49,8 @@ class AssistantView extends StatelessWidget {
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: context.pageOverlayStyle,
+      // Light status-bar icons on the dark header.
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
         body: Column(
           children: [

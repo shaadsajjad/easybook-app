@@ -38,78 +38,73 @@ class AppNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
-    return SafeArea(
-      top: false,
-      minimum: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.xs,
-          AppSpacing.md,
-          0,
-        ),
-        // Frosted glass: content scrolling underneath shows through,
-        // blurred and tinted with ink.
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: _blur, sigmaY: _blur),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: palette.hero.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(AppRadius.xl),
-                border: Border.all(
-                  color: palette.onHero.withValues(alpha: 0.08),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final itemWidth = constraints.maxWidth / items.length;
-                    return Stack(
-                      children: [
-                        // The sliding lime pill behind the selected icon.
-                        AnimatedPositioned(
-                          duration: AppDurations.slow,
-                          curve: AppMotion.enter,
-                          top: AppSpacing.xxs,
-                          left:
-                              itemWidth * selectedIndex +
-                              (itemWidth - _pillWidth) / 2,
-                          width: _pillWidth,
-                          height: _pillHeight,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: palette.accent,
-                              borderRadius: BorderRadius.circular(
-                                AppRadius.pill,
+    // Sits above the system bottom bar (Android Back/Home/Recents keys or
+    // gesture handle, iPhone home indicator), with a small gap.
+    final systemInset = MediaQuery.viewPaddingOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.xs,
+        AppSpacing.md,
+        AppSpacing.sm + systemInset,
+      ),
+      // Frosted glass: content scrolling underneath shows through,
+      // blurred and tinted with ink.
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: _blur, sigmaY: _blur),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: palette.hero.withValues(alpha: 0.72),
+              borderRadius: BorderRadius.circular(AppRadius.xl),
+              border: Border.all(color: palette.onHero.withValues(alpha: 0.08)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth = constraints.maxWidth / items.length;
+                  return Stack(
+                    children: [
+                      // The sliding lime pill behind the selected icon.
+                      AnimatedPositioned(
+                        duration: AppDurations.slow,
+                        curve: AppMotion.enter,
+                        top: AppSpacing.xxs,
+                        left:
+                            itemWidth * selectedIndex +
+                            (itemWidth - _pillWidth) / 2,
+                        width: _pillWidth,
+                        height: _pillHeight,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: palette.accent,
+                            borderRadius: BorderRadius.circular(AppRadius.pill),
+                            boxShadow: [
+                              BoxShadow(
+                                color: palette.glow,
+                                blurRadius: AppElevation.cardBlur,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: palette.glow,
-                                  blurRadius: AppElevation.cardBlur,
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            for (var i = 0; i < items.length; i++)
-                              Expanded(
-                                child: _NavButton(
-                                  item: items[i],
-                                  selected: i == selectedIndex,
-                                  onTap: () => onSelected(i),
-                                ),
+                      ),
+                      Row(
+                        children: [
+                          for (var i = 0; i < items.length; i++)
+                            Expanded(
+                              child: _NavButton(
+                                item: items[i],
+                                selected: i == selectedIndex,
+                                onTap: () => onSelected(i),
                               ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),

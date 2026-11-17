@@ -27,7 +27,7 @@ class AuthHeader extends StatelessWidget {
           maxWidth: AppBreakpoints.maxFormWidth,
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.page,
-            AppSpacing.md,
+            AppSpacing.pageTop,
             AppSpacing.page,
             AppSpacing.xxxl + AppSpacing.md,
           ),

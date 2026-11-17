@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easybook_app/app/status_bar_strip.dart';
 import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
@@ -81,6 +82,9 @@ class _AppState extends State<App> {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           routerConfig: _router,
+          // Every screen starts below a solid status bar strip.
+          builder: (context, child) =>
+              StatusBarStrip(child: child ?? const SizedBox.shrink()),
         ),
       ),
     );

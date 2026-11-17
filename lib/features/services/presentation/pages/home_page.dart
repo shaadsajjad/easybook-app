@@ -8,6 +8,7 @@ import 'package:easybook_app/core/router/app_routes.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/section_header.dart';
+import 'package:easybook_app/core/widgets/tab_reselect.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/presentation/bloc/categories_cubit.dart';
 import 'package:easybook_app/features/services/presentation/bloc/featured_services_cubit.dart';
@@ -66,6 +67,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final _scrollController = ScrollController();
+  final _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -89,11 +91,26 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _refresh() async {
     final bloc = context.read<ServicesBloc>()..add(const ServicesRefreshed());
-    unawaited(context.read<FeaturedServicesCubit>().load());
-    unawaited(context.read<CategoriesCubit>().load());
+    // Pull to refresh always asks the API (the bloc skips the cache too).
+    unawaited(context.read<FeaturedServicesCubit>().load(forceRefresh: true));
+    unawaited(context.read<CategoriesCubit>().load(forceRefresh: true));
     await bloc.stream.firstWhere(
       (state) => state.status != ServicesStatus.loading,
     );
+  }
+
+  /// Home tab tapped again: scroll to the top and refresh (showing the
+  /// pull-to-refresh spinner, which calls [_refresh]).
+  Future<void> _onTabReselected() async {
+    if (_scrollController.hasClients && _scrollController.offset > 0) {
+      await _scrollController.animateTo(
+        0,
+        duration: AppDurations.slow,
+        curve: AppMotion.standard,
+      );
+    }
+    if (!mounted) return;
+    await _refreshKey.currentState?.show();
   }
 
   Future<void> _openPriceFilter() async {
@@ -126,63 +143,70 @@ class _HomeViewState extends State<HomeView> {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: _refresh,
-          child: CustomScrollView(
-            controller: _scrollController,
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: BlocSelector<ServicesBloc, ServicesState, bool>(
-                  selector: (state) => state.filter.hasPriceRange,
-                  builder: (context, hasPriceFilter) => HomeHeader(
-                    searchBar: ServiceSearchBar(
-                      hasPriceFilter: hasPriceFilter,
-                      onFilterPressed: _openPriceFilter,
-                      onChanged: (query) => context.read<ServicesBloc>().add(
-                        ServicesSearchChanged(query),
+      child: TabReselectListener(
+        tab: AppTabs.home,
+        onReselect: () => unawaited(_onTabReselected()),
+        child: Scaffold(
+          body: RefreshIndicator(
+            key: _refreshKey,
+            onRefresh: _refresh,
+            child: CustomScrollView(
+              controller: _scrollController,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: BlocSelector<ServicesBloc, ServicesState, bool>(
+                    selector: (state) => state.filter.hasPriceRange,
+                    builder: (context, hasPriceFilter) => HomeHeader(
+                      searchBar: ServiceSearchBar(
+                        hasPriceFilter: hasPriceFilter,
+                        onFilterPressed: _openPriceFilter,
+                        onChanged: (query) => context.read<ServicesBloc>().add(
+                          ServicesSearchChanged(query),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.lg)),
-              SliverToBoxAdapter(
-                child: CategoryChips(horizontalPadding: inset),
-              ),
-              SliverToBoxAdapter(
-                child: BlocSelector<ServicesBloc, ServicesState, bool>(
-                  selector: (state) => state.filter.isActive,
-                  builder: (context, isFiltering) => isFiltering
-                      ? const SizedBox.shrink()
-                      : FeaturedSection(
-                          horizontalPadding: inset,
-                          onServiceTap: _openService,
-                        ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppSpacing.lg),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    inset - AppSpacing.page,
-                    AppSpacing.xl,
-                    inset - AppSpacing.page,
-                    AppSpacing.md,
+                SliverToBoxAdapter(
+                  child: CategoryChips(horizontalPadding: inset),
+                ),
+                SliverToBoxAdapter(
+                  child: BlocSelector<ServicesBloc, ServicesState, bool>(
+                    selector: (state) => state.filter.isActive,
+                    builder: (context, isFiltering) => isFiltering
+                        ? const SizedBox.shrink()
+                        : FeaturedSection(
+                            horizontalPadding: inset,
+                            onServiceTap: _openService,
+                          ),
                   ),
-                  child: const _ListTitle(),
                 ),
-              ),
-              ServicesListSliver(
-                horizontalPadding: inset,
-                onServiceTap: _openService,
-              ),
-              // Room for the floating navigation bar.
-              SliverToBoxAdapter(
-                child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
-              ),
-            ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      inset - AppSpacing.page,
+                      AppSpacing.xl,
+                      inset - AppSpacing.page,
+                      AppSpacing.md,
+                    ),
+                    child: const _ListTitle(),
+                  ),
+                ),
+                ServicesListSliver(
+                  horizontalPadding: inset,
+                  onServiceTap: _openService,
+                ),
+                // Room for the floating navigation bar.
+                SliverToBoxAdapter(
+                  child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+                ),
+              ],
+            ),
           ),
         ),
       ),

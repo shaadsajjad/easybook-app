@@ -8,6 +8,7 @@ class GetFeaturedServices {
 
   final ServicesRepository _repository;
 
-  Future<Either<Failure, List<Service>>> call() =>
-      _repository.getFeaturedServices();
+  /// [forceRefresh] skips the cache (pull to refresh).
+  Future<Either<Failure, List<Service>>> call({bool forceRefresh = false}) =>
+      _repository.getFeaturedServices(forceRefresh: forceRefresh);
 }

@@ -7,5 +7,7 @@ class GetCategories {
 
   final ServicesRepository _repository;
 
-  Future<Either<Failure, List<String>>> call() => _repository.getCategories();
+  /// [forceRefresh] skips the cache (pull to refresh).
+  Future<Either<Failure, List<String>>> call({bool forceRefresh = false}) =>
+      _repository.getCategories(forceRefresh: forceRefresh);
 }

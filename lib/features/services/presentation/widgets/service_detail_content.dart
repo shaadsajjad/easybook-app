@@ -29,6 +29,9 @@ class ServiceDetailContent extends StatelessWidget {
           expandedHeight: AppSizes.detailImageHeight,
           pinned: true,
           stretch: true,
+          // Room for the round back button, lined up with the page margin.
+          toolbarHeight: kToolbarHeight + AppSpacing.md,
+          leadingWidth: AppSpacing.page + AppSizes.minTapTarget,
           leading: const _RoundBackButton(),
           // The content below starts on a rounded sheet over the photo.
           bottom: PreferredSize(
@@ -43,6 +46,8 @@ class ServiceDetailContent extends StatelessWidget {
               ),
             ),
           ),
+          // Collapses into an ink bar, matching the status bar strip.
+          backgroundColor: context.palette.hero,
           flexibleSpace: FlexibleSpaceBar(
             background: Hero(
               tag: serviceHeroTag(service.id),
@@ -184,17 +189,21 @@ class _RoundBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 4 dp padding inside the 56 dp leading slot leaves a 48 dp tap target.
+    // Lined up with the page's left margin, centred in the (taller)
+    // toolbar; the button keeps a 48 dp tap target.
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xs),
-      child: IconButton.filled(
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-        style: IconButton.styleFrom(
-          backgroundColor: context.palette.hero,
-          foregroundColor: context.palette.onHero,
+      padding: const EdgeInsets.only(left: AppSpacing.page),
+      child: Center(
+        child: IconButton.filled(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          style: IconButton.styleFrom(
+            backgroundColor: context.palette.hero,
+            foregroundColor: context.palette.onHero,
+            minimumSize: const Size.square(AppSizes.minTapTarget),
+          ),
+          icon: const Icon(AppIcons.back),
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
-        icon: const Icon(AppIcons.back),
-        onPressed: () => Navigator.of(context).maybePop(),
       ),
     );
   }
