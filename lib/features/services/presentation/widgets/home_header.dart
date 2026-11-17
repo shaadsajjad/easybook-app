@@ -54,7 +54,7 @@ class HomeHeader extends StatelessWidget {
                       children: [
                         Text(
                           greeting,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: context.textTheme.headlineSmall?.copyWith(
                             color: onGradient,
@@ -73,7 +73,7 @@ class HomeHeader extends StatelessWidget {
                   const SizedBox(width: AppSpacing.md),
                   CircleAvatar(
                     radius: AppSizes.avatar / 2.4,
-                    backgroundColor: onGradient.withValues(alpha: 0.2),
+                    backgroundColor: context.palette.solidFill,
                     child: Text(
                       user?.initials ?? '',
                       style: context.textTheme.titleSmall?.copyWith(

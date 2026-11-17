@@ -12,15 +12,9 @@ abstract class LocaleKeys {
   static const nav_profile = 'nav.profile';
   static const nav = 'nav';
   static const common_retry = 'common.retry';
-  static const common_ok = 'common.ok';
   static const common_cancel = 'common.cancel';
-  static const common_close = 'common.close';
-  static const common_see_all = 'common.see_all';
   static const common_show_password = 'common.show_password';
   static const common_hide_password = 'common.hide_password';
-  static const common_loading = 'common.loading';
-  static const common_nothing_here = 'common.nothing_here';
-  static const common_back = 'common.back';
   static const common = 'common';
   static const errors_title = 'errors.title';
   static const errors_network = 'errors.network';
@@ -30,7 +24,6 @@ abstract class LocaleKeys {
   static const errors_rate_limited = 'errors.rate_limited';
   static const errors_unavailable = 'errors.unavailable';
   static const errors = 'errors';
-  static const validation_required = 'validation.required';
   static const validation_email_required = 'validation.email_required';
   static const validation_email_invalid = 'validation.email_invalid';
   static const validation_name_required = 'validation.name_required';
@@ -190,7 +183,6 @@ abstract class LocaleKeys {
   static const profile_language_english = 'profile.language_english';
   static const profile_language_bengali = 'profile.language_bengali';
   static const profile_no_phone = 'profile.no_phone';
-  static const profile_member_since = 'profile.member_since';
   static const profile_logout_subtitle = 'profile.logout_subtitle';
   static const profile_name_label = 'profile.name_label';
   static const profile_email_label = 'profile.email_label';
@@ -225,6 +217,5 @@ abstract class LocaleKeys {
   static const assistant_typing = 'assistant.typing';
   static const assistant_retry = 'assistant.retry';
   static const assistant_open_service = 'assistant.open_service';
-  static const assistant_you = 'assistant.you';
   static const assistant = 'assistant';
 }

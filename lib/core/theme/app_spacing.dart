@@ -45,6 +45,18 @@ abstract final class AppSizes {
   static const double detailImageHeight = 320;
   static const double chipRowHeight = 48;
 
+  // Skeleton placeholder line widths.
+  static const double skeletonShort = 80;
+  static const double skeletonMedium = 140;
+  static const double skeletonLong = 160;
+  static const double skeletonLineSm = 12;
+  static const double skeletonLineMd = 14;
+  static const double skeletonLineLg = 18;
+  static const double skeletonPill = 22;
+
+  /// Same size as the glyph on the native launch screens.
+  static const double splashLogo = 140;
+
   // Booking.
   static const double dayChipWidth = 64;
   static const double slotChipMinWidth = 96;

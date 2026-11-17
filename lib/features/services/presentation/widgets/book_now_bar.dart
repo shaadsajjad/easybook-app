@@ -29,33 +29,49 @@ class BookNowBar extends StatelessWidget {
             AppSpacing.page,
             AppSpacing.md,
           ),
-          child: Row(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    LocaleKeys.services_starting_at.tr(),
-                    style: context.textTheme.bodySmall,
+          child: LayoutBuilder(
+            builder: (context, constraints) => Row(
+              children: [
+                // The price takes what it needs, up to 40% of the row, and
+                // shrinks on small phones with large text. The Book button
+                // always gets the rest.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth * 0.4,
                   ),
-                  Text(
-                    PriceFormatter.format(price, locale: context.localeName),
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      color: context.palette.accent,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          LocaleKeys.services_starting_at.tr(),
+                          style: context.textTheme.bodySmall,
+                        ),
+                        Text(
+                          PriceFormatter.format(
+                            price,
+                            locale: context.localeName,
+                          ),
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            color: context.palette.accent,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(width: AppSpacing.xl),
-              Expanded(
-                child: AppButton(
-                  label: LocaleKeys.services_book_now.tr(),
-                  icon: Icons.calendar_month_rounded,
-                  onPressed: onBook,
                 ),
-              ),
-            ],
+                const SizedBox(width: AppSpacing.lg),
+                Expanded(
+                  child: AppButton(
+                    label: LocaleKeys.services_book_now.tr(),
+                    icon: Icons.calendar_month_rounded,
+                    onPressed: onBook,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

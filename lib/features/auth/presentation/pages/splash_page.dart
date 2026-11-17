@@ -18,10 +18,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SplashPage extends StatelessWidget {
   const new({super.key});
 
-  /// Same size as the glyph on the native launch screen, so the hand-over
-  /// from the OS to Flutter looks seamless.
-  static const double logoSize = 140;
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -59,7 +55,7 @@ class SplashView extends StatelessWidget {
                       builder: (context, scale, child) =>
                           Transform.scale(scale: scale, child: child),
                       child: const AppLogo(
-                        size: SplashPage.logoSize,
+                        size: AppSizes.splashLogo,
                         showBackground: false,
                       ),
                     ),
@@ -173,7 +169,7 @@ class _SplashError extends StatelessWidget {
               context.read<AuthBloc>().add(const AuthSessionRequested()),
           style: FilledButton.styleFrom(
             backgroundColor: onGradient,
-            foregroundColor: context.colors.primary,
+            foregroundColor: context.palette.solidFill,
             minimumSize: const Size(0, AppSizes.buttonHeight),
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           ),

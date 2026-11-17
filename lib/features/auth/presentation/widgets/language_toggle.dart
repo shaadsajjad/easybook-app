@@ -26,14 +26,16 @@ class LanguageToggle extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xs),
+          padding: const EdgeInsets.all(AppSpacing.xxs),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final (locale, label) in _options)
                 _LanguageOption(
                   label: label,
-                  selected: context.locale == locale,
+                  selected:
+                      Localizations.localeOf(context).languageCode ==
+                      locale.languageCode,
                   onTap: () => context.setLocale(locale),
                 ),
             ],
@@ -64,7 +66,7 @@ class _LanguageOption extends StatelessWidget {
           duration: AppDurations.fast,
           constraints: const BoxConstraints(
             minWidth: AppSizes.minTapTarget,
-            minHeight: AppSizes.minTapTarget - AppSpacing.md,
+            minHeight: AppSizes.minTapTarget,
           ),
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),

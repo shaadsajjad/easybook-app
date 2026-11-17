@@ -163,7 +163,7 @@ abstract final class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surface,
-        selectedColor: primary,
+        selectedColor: palette.solidFill,
         disabledColor: surfaceMuted,
         side: BorderSide(color: outline),
         shape: const StadiumBorder(),

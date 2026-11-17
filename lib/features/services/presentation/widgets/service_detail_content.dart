@@ -149,8 +149,9 @@ class _RoundBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 4 dp padding inside the 56 dp leading slot leaves a 48 dp tap target.
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.xs),
       child: IconButton.filled(
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         style: IconButton.styleFrom(
