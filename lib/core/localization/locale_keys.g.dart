@@ -19,20 +19,9 @@ abstract class LocaleKeys {
   static const common_show_password = 'common.show_password';
   static const common_hide_password = 'common.hide_password';
   static const common_loading = 'common.loading';
-  static const common_coming_soon = 'common.coming_soon';
   static const common_nothing_here = 'common.nothing_here';
   static const common_back = 'common.back';
   static const common = 'common';
-  static const pages_splash = 'pages.splash';
-  static const pages_login = 'pages.login';
-  static const pages_register = 'pages.register';
-  static const pages_service_detail = 'pages.service_detail';
-  static const pages_book_service = 'pages.book_service';
-  static const pages_booking_confirmation = 'pages.booking_confirmation';
-  static const pages_booking_detail = 'pages.booking_detail';
-  static const pages_edit_profile = 'pages.edit_profile';
-  static const pages_change_password = 'pages.change_password';
-  static const pages = 'pages';
   static const errors_title = 'errors.title';
   static const errors_network = 'errors.network';
   static const errors_generic = 'errors.generic';
@@ -222,4 +211,20 @@ abstract class LocaleKeys {
   static const profile_update_password = 'profile.update_password';
   static const profile_password_changed = 'profile.password_changed';
   static const profile = 'profile';
+  static const assistant_title = 'assistant.title';
+  static const assistant_subtitle = 'assistant.subtitle';
+  static const assistant_welcome_title = 'assistant.welcome_title';
+  static const assistant_welcome_title_no_name =
+      'assistant.welcome_title_no_name';
+  static const assistant_welcome_message = 'assistant.welcome_message';
+  static const assistant_prompt_back = 'assistant.prompt_back';
+  static const assistant_prompt_haircut = 'assistant.prompt_haircut';
+  static const assistant_prompt_home = 'assistant.prompt_home';
+  static const assistant_input_hint = 'assistant.input_hint';
+  static const assistant_send = 'assistant.send';
+  static const assistant_typing = 'assistant.typing';
+  static const assistant_retry = 'assistant.retry';
+  static const assistant_open_service = 'assistant.open_service';
+  static const assistant_you = 'assistant.you';
+  static const assistant = 'assistant';
 }

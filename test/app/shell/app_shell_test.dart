@@ -3,6 +3,7 @@ import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_router.dart';
 import 'package:easybook_app/core/theme/app_theme.dart';
+import 'package:easybook_app/features/ai_assistant/presentation/bloc/chat_bloc.dart';
 import 'package:easybook_app/features/appointments/presentation/bloc/my_bookings_cubit.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/services/presentation/bloc/categories_cubit.dart';
@@ -30,7 +31,9 @@ class _MockCategoriesCubit extends MockCubit<CategoriesState>
 class _MockMyBookingsCubit extends MockCubit<MyBookingsState>
     implements MyBookingsCubit;
 
-/// Home and My Bookings get their blocs from get_it; register idle mocks.
+class _MockChatBloc extends MockBloc<ChatEvent, ChatState> implements ChatBloc;
+
+/// The tabs get their blocs from get_it; register idle mocks.
 void _registerHomeMocks() {
   final services = _MockServicesBloc();
   final featured = _MockFeaturedCubit();
@@ -43,7 +46,10 @@ void _registerHomeMocks() {
   final bookings = _MockMyBookingsCubit();
   when(() => bookings.state).thenReturn(const MyBookingsState());
   when(bookings.loadAll).thenAnswer((_) async {});
+  final chat = _MockChatBloc();
+  when(() => chat.state).thenReturn(const ChatState());
   getIt
+    ..registerFactory<ChatBloc>(() => chat)
     ..registerFactory<MyBookingsCubit>(() => bookings)
     ..registerFactory<ServicesBloc>(() => services)
     ..registerFactory<FeaturedServicesCubit>(() => featured)

@@ -1,9 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/app/shell/app_shell.dart';
-import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
 import 'package:easybook_app/core/router/go_router_refresh_stream.dart';
-import 'package:easybook_app/core/router/placeholder_page.dart';
+import 'package:easybook_app/features/ai_assistant/presentation/pages/assistant_page.dart';
 import 'package:easybook_app/features/appointments/domain/entities/appointment.dart';
 import 'package:easybook_app/features/appointments/presentation/pages/booking_confirmation_page.dart';
 import 'package:easybook_app/features/appointments/presentation/pages/booking_detail_page.dart';
@@ -119,8 +117,7 @@ GoRouter createAppRouter(AuthBloc authBloc) {
               GoRoute(
                 path: AppRoutes.assistant,
                 name: AppRouteNames.assistant,
-                builder: (context, state) =>
-                    PlaceholderPage(title: LocaleKeys.nav_assistant.tr()),
+                builder: (context, state) => const AssistantPage(),
               ),
             ],
           ),
