@@ -48,3 +48,12 @@ abstract final class AppRouteNames {
   static const String editProfile = 'editProfile';
   static const String changePassword = 'changePassword';
 }
+
+/// Positions of the bottom-navigation tabs (same order as the shell
+/// branches in app_router.dart).
+abstract final class AppTabs {
+  static const int home = 0;
+  static const int bookings = 1;
+  static const int assistant = 2;
+  static const int profile = 3;
+}

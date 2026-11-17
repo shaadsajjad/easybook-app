@@ -49,7 +49,7 @@ class MyBookingsView extends StatelessWidget {
                 ResponsiveCenter(
                   padding: const EdgeInsets.fromLTRB(
                     AppSpacing.page,
-                    AppSpacing.lg,
+                    AppSpacing.pageTop,
                     AppSpacing.page,
                     0,
                   ),

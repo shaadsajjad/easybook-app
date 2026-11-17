@@ -28,14 +28,15 @@ class FeaturedServicesCubit extends Cubit<FeaturedServicesState> {
 
   final GetFeaturedServices _getFeaturedServices;
 
-  Future<void> load() async {
+  /// [forceRefresh] skips the cache (pull to refresh).
+  Future<void> load({bool forceRefresh = false}) async {
     emit(
       FeaturedServicesState(
         status: FeaturedStatus.loading,
         services: state.services,
       ),
     );
-    final result = await _getFeaturedServices();
+    final result = await _getFeaturedServices(forceRefresh: forceRefresh);
     emit(
       result.fold(
         (failure) => FeaturedServicesState(

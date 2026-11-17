@@ -23,9 +23,11 @@ class ChatHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.page,
-            vertical: AppSpacing.md,
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.page,
+            AppSpacing.xl,
+            AppSpacing.page,
+            AppSpacing.lg,
           ),
           child: Row(
             children: [

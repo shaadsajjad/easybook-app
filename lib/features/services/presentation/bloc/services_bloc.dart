@@ -21,7 +21,9 @@ class ServicesBloc extends Bloc<ServicesEvent, ServicesState> {
     Duration searchDebounce = AppConstants.searchDebounce,
   }) : super(const ServicesState()) {
     on<ServicesStarted>((event, emit) => _reload(state.filter, emit));
-    on<ServicesRefreshed>((event, emit) => _reload(state.filter, emit));
+    on<ServicesRefreshed>(
+      (event, emit) => _reload(state.filter, emit, forceRefresh: true),
+    );
     on<ServicesSearchChanged>(
       (event, emit) => _reload(state.filter.withSearch(event.query), emit),
       transformer: debounce(searchDebounce),
@@ -44,21 +46,27 @@ class ServicesBloc extends Bloc<ServicesEvent, ServicesState> {
   final GetServices _getServices;
   int _requestId = 0;
 
+  /// [forceRefresh] skips the repository's cache (pull to refresh).
   Future<void> _reload(
     ServiceFilter filter,
-    Emitter<ServicesState> emit,
-  ) async {
+    Emitter<ServicesState> emit, {
+    bool forceRefresh = false,
+  }) async {
     final requestId = ++_requestId;
     emit(
       ServicesState(
         status: ServicesStatus.loading,
         filter: filter,
-        // Keep the old items while reloading so the page doesn't flash.
-        services: state.services,
+        // Pull to refresh keeps the cards on screen (dimmed). A new search
+        // or filter clears them, so the list shows skeletons instead of
+        // results that no longer match.
+        services: forceRefresh ? state.services : const [],
       ),
     );
 
-    final result = await _getServices(GetServicesParams(filter: filter));
+    final result = await _getServices(
+      GetServicesParams(filter: filter, forceRefresh: forceRefresh),
+    );
     if (requestId != _requestId) return;
 
     emit(

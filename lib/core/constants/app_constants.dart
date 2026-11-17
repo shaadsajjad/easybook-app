@@ -11,6 +11,11 @@ abstract final class AppConstants {
   static const Duration searchDebounce = Duration(milliseconds: 300);
   static const int servicesPageSize = 20;
 
+  // In-memory cache (services feature). Pull to refresh always skips it.
+  // Availability, bookings and profile are never cached.
+  static const Duration servicesCacheTtl = Duration(minutes: 5);
+  static const Duration categoriesCacheTtl = Duration(hours: 1);
+
   // Booking.
   static const int bookingDaysAhead = 14;
   static const int notesMaxLength = 500;

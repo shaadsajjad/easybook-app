@@ -1,6 +1,7 @@
 import 'package:easybook_app/core/error/exceptions.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/features/services/data/datasources/services_remote_data_source.dart';
+import 'package:easybook_app/features/services/data/models/availability_model.dart';
 import 'package:easybook_app/features/services/data/models/pagination_meta_model.dart';
 import 'package:easybook_app/features/services/data/models/service_model.dart';
 import 'package:easybook_app/features/services/data/repositories/services_repository_impl.dart';
@@ -121,6 +122,117 @@ void main() {
         await repository.getServiceById('x'),
         const Left<Failure, dynamic>(NotFoundFailure('Service not found')),
       );
+    });
+  });
+
+  group('cache', () {
+    void stubServices() {
+      when(
+        () => remote.getServices(
+          filter: any(named: 'filter'),
+          page: any(named: 'page'),
+          featuredOnly: any(named: 'featuredOnly'),
+        ),
+      ).thenAnswer((_) async => ([_model], _meta));
+    }
+
+    test('answers a repeated request from the cache', () async {
+      stubServices();
+      await repository.getServices(filter: const ServiceFilter(), page: 1);
+      final second = await repository.getServices(
+        filter: const ServiceFilter(),
+        page: 1,
+      );
+
+      expect(second.isRight(), isTrue);
+      verify(() => remote.getServices(filter: const ServiceFilter(), page: 1))
+          .called(1);
+    });
+
+    test('caches each filter and page separately', () async {
+      stubServices();
+      await repository.getServices(filter: const ServiceFilter(), page: 1);
+      await repository.getServices(filter: const ServiceFilter(), page: 2);
+      await repository.getServices(
+        filter: const ServiceFilter(search: 'spa'),
+        page: 1,
+      );
+
+      verify(
+        () => remote.getServices(
+          filter: any(named: 'filter'),
+          page: any(named: 'page'),
+        ),
+      ).called(3);
+    });
+
+    test('forceRefresh skips the cache', () async {
+      when(remote.getCategories).thenAnswer((_) async => ['Health']);
+      await repository.getCategories();
+      await repository.getCategories(forceRefresh: true);
+
+      verify(remote.getCategories).called(2);
+    });
+
+    test('entries expire after the time limit', () async {
+      var now = DateTime(2026, 11, 18, 10);
+      repository = ServicesRepositoryImpl(remote, now: () => now);
+      stubServices();
+
+      await repository.getFeaturedServices();
+      now = now.add(const Duration(minutes: 2));
+      await repository.getFeaturedServices();
+      verify(
+        () => remote.getServices(
+          filter: const ServiceFilter(),
+          page: 1,
+          featuredOnly: true,
+        ),
+      ).called(1);
+
+      now = now.add(const Duration(minutes: 4));
+      await repository.getFeaturedServices();
+      verify(
+        () => remote.getServices(
+          filter: const ServiceFilter(),
+          page: 1,
+          featuredOnly: true,
+        ),
+      ).called(1);
+    });
+
+    test('a failure is not cached, so the next call tries again', () async {
+      var calls = 0;
+      when(() => remote.getServiceById('s1')).thenAnswer((_) async {
+        calls++;
+        if (calls == 1) throw const NetworkException();
+        return _model;
+      });
+
+      final first = await repository.getServiceById('s1');
+      final second = await repository.getServiceById('s1');
+
+      expect(first.isLeft(), isTrue);
+      expect(second, const Right<Failure, dynamic>(tService));
+      verify(() => remote.getServiceById('s1')).called(2);
+    });
+
+    test('availability is never cached', () async {
+      final availability = AvailabilityModel.fromJson({
+        'serviceId': 's1',
+        'date': '2026-11-18',
+        'timeZone': 'Asia/Dhaka',
+        'durationMinutes': 60,
+        'slots': <Map<String, dynamic>>[],
+      });
+      when(() => remote.getAvailability(serviceId: 's1', date: '2026-11-18'))
+          .thenAnswer((_) async => availability);
+
+      await repository.getAvailability(serviceId: 's1', date: '2026-11-18');
+      await repository.getAvailability(serviceId: 's1', date: '2026-11-18');
+
+      verify(() => remote.getAvailability(serviceId: 's1', date: '2026-11-18'))
+          .called(2);
     });
   });
 }

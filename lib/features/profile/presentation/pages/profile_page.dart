@@ -37,7 +37,7 @@ class ProfilePage extends StatelessWidget {
             // The bottom inset clears the floating navigation bar.
             padding: EdgeInsets.fromLTRB(
               AppSpacing.page,
-              AppSpacing.lg,
+              AppSpacing.pageTop,
               AppSpacing.page,
               AppSpacing.xxl + MediaQuery.paddingOf(context).bottom,
             ),

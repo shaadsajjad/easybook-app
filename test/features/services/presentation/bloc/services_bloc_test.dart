@@ -121,6 +121,41 @@ void main() {
   );
 
   blocTest<ServicesBloc, ServicesState>(
+    'a new category clears the old cards while loading (skeletons)',
+    seed: () => loaded,
+    build: buildBloc,
+    act: (bloc) => bloc.add(const ServicesCategorySelected('Health')),
+    expect: () => [
+      const ServicesState(
+        status: ServicesStatus.loading,
+        filter: ServiceFilter(category: 'Health'),
+      ),
+      isA<ServicesState>().having(
+        (s) => s.status,
+        'status',
+        ServicesStatus.success,
+      ),
+    ],
+  );
+
+  blocTest<ServicesBloc, ServicesState>(
+    'pull to refresh keeps the cards while loading',
+    seed: () => loaded,
+    build: buildBloc,
+    act: (bloc) => bloc.add(const ServicesRefreshed()),
+    expect: () => [
+      isA<ServicesState>()
+          .having((s) => s.status, 'status', ServicesStatus.loading)
+          .having((s) => s.services, 'services', [tService]),
+      isA<ServicesState>().having(
+        (s) => s.status,
+        'status',
+        ServicesStatus.success,
+      ),
+    ],
+  );
+
+  blocTest<ServicesBloc, ServicesState>(
     'a price range reloads with min and max',
     build: buildBloc,
     act: (bloc) => bloc.add(
@@ -226,13 +261,16 @@ void main() {
   });
 
   blocTest<ServicesBloc, ServicesState>(
-    'refresh reloads page 1 with the current filter',
+    'refresh reloads page 1 with the current filter, skipping the cache',
     seed: () => loaded.copyWith(filter: const ServiceFilter(search: 'spa')),
     build: buildBloc,
     act: (bloc) => bloc.add(const ServicesRefreshed()),
     verify: (_) => verify(
       () => getServices(
-        const GetServicesParams(filter: ServiceFilter(search: 'spa')),
+        const GetServicesParams(
+          filter: ServiceFilter(search: 'spa'),
+          forceRefresh: true,
+        ),
       ),
     ).called(1),
   );

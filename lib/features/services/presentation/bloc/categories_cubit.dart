@@ -26,14 +26,15 @@ class CategoriesCubit extends Cubit<CategoriesState> {
 
   final GetCategories _getCategories;
 
-  Future<void> load() async {
+  /// [forceRefresh] skips the cache (pull to refresh).
+  Future<void> load({bool forceRefresh = false}) async {
     emit(
       CategoriesState(
         status: CategoriesStatus.loading,
         categories: state.categories,
       ),
     );
-    final result = await _getCategories();
+    final result = await _getCategories(forceRefresh: forceRefresh);
     emit(
       result.fold(
         (failure) =>

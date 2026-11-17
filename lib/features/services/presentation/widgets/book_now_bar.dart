@@ -18,11 +18,22 @@ class BookNowBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        // An ink panel with rounded top corners.
+        // An ink panel with rounded top corners. The faint outline and the
+        // shadow keep it apart from the page in dark mode too.
         color: context.palette.hero,
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppRadius.xl),
         ),
+        border: Border.all(
+          color: context.palette.onHero.withValues(alpha: 0.1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: context.palette.cardShadow,
+            blurRadius: AppElevation.cardBlur,
+            offset: const Offset(0, -AppElevation.cardOffsetY),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,

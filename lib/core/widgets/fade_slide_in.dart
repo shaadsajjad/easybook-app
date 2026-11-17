@@ -18,6 +18,9 @@ class FadeSlideIn extends StatefulWidget {
     this.index = 0,
     this.offset = AppMotion.entranceOffset,
     this.axis = Axis.vertical,
+    this.scaleFrom = AppMotion.entranceScale,
+    this.curve = AppMotion.enter,
+    this.animate = true,
     super.key,
   });
 
@@ -31,6 +34,17 @@ class FadeSlideIn extends StatefulWidget {
 
   /// Vertical rises from below; horizontal slides in from the right.
   final Axis axis;
+
+  /// Scale the child starts from (1 = no zoom).
+  final double scaleFrom;
+
+  /// Curve of the movement. The default springs with a small overshoot;
+  /// use [AppMotion.smooth] for calm list items.
+  final Curve curve;
+
+  /// False shows the child at once. Only read when first built, so a
+  /// rebuild never restarts or cuts an animation in progress.
+  final bool animate;
 
   @override
   State<FadeSlideIn> createState() => _FadeSlideInState();
@@ -53,7 +67,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
 
   late final Animation<double> _motion = CurvedAnimation(
     parent: _controller,
-    curve: Interval(_start, 1, curve: AppMotion.enter),
+    curve: Interval(_start, 1, curve: widget.curve),
   );
   late final Animation<double> _opacity = CurvedAnimation(
     parent: _controller,
@@ -64,7 +78,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller.isAnimating || _controller.isCompleted) return;
-    if (MediaQuery.disableAnimationsOf(context)) {
+    if (!widget.animate || MediaQuery.disableAnimationsOf(context)) {
       _controller.value = 1;
     } else {
       _controller.forward();
@@ -85,8 +99,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
       builder: (context, child) {
         final t = _motion.value;
         final shift = widget.offset * (1 - t);
-        final scale =
-            AppMotion.entranceScale + (1 - AppMotion.entranceScale) * t;
+        final scale = widget.scaleFrom + (1 - widget.scaleFrom) * t;
         return Opacity(
           opacity: _opacity.value.clamp(0, 1),
           child: Transform.translate(

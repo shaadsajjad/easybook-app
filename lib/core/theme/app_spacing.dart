@@ -13,6 +13,10 @@ abstract final class AppSpacing {
 
   /// Horizontal padding of every page.
   static const double page = 20;
+
+  /// Space between the status bar (or camera cutout) and a page's first
+  /// content, on top of the safe-area inset.
+  static const double pageTop = xxl + xs;
 }
 
 /// Corner radii.
@@ -134,6 +138,10 @@ abstract final class AppMotion {
 
   /// Scale of a card or button while pressed.
   static const double pressedScale = 0.94;
+
+  /// How far the page must scroll in one direction before the floating
+  /// navigation bar hides (scrolling down) or comes back (scrolling up).
+  static const double navToggleDistance = 24;
 
   /// Only the first few list items are staggered; later ones (built while
   /// scrolling) appear without extra delay.

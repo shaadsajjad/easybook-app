@@ -8,6 +8,9 @@ class GetServiceById {
 
   final ServicesRepository _repository;
 
-  Future<Either<Failure, Service>> call(String id) =>
-      _repository.getServiceById(id);
+  /// [forceRefresh] skips the cache.
+  Future<Either<Failure, Service>> call(
+    String id, {
+    bool forceRefresh = false,
+  }) => _repository.getServiceById(id, forceRefresh: forceRefresh);
 }
