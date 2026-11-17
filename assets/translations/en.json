@@ -18,20 +18,8 @@
     "show_password": "Show password",
     "hide_password": "Hide password",
     "loading": "Loading…",
-    "coming_soon": "This screen is being built in a later step.",
     "nothing_here": "Nothing here yet",
     "back": "Back"
-  },
-  "pages": {
-    "splash": "Welcome",
-    "login": "Log in",
-    "register": "Create account",
-    "service_detail": "Service",
-    "book_service": "Book a time",
-    "booking_confirmation": "Booking confirmed",
-    "booking_detail": "Booking",
-    "edit_profile": "Edit profile",
-    "change_password": "Change password"
   },
   "errors": {
     "title": "Something went wrong",
@@ -216,5 +204,21 @@
     "password_rules": "At least 8 characters, with a letter and a number.",
     "update_password": "Update password",
     "password_changed": "Password changed. You're still logged in."
+  },
+  "assistant": {
+    "title": "EasyBook Assistant",
+    "subtitle": "Ask about services, prices and booking",
+    "welcome_title": "Hi {name}, how can I help?",
+    "welcome_title_no_name": "Hi, how can I help?",
+    "welcome_message": "Tell me what you need and I'll suggest the right service, with its price and duration.",
+    "prompt_back": "I have a stiff back from desk work. What do you recommend?",
+    "prompt_haircut": "How much is a haircut and how long does it take?",
+    "prompt_home": "I need help cleaning my flat this weekend.",
+    "input_hint": "Ask the assistant…",
+    "send": "Send message",
+    "typing": "Assistant is typing",
+    "retry": "Try again",
+    "open_service": "Open {service}",
+    "you": "You"
   }
 }

@@ -4,6 +4,11 @@ import 'package:easybook_app/core/network/auth_interceptor.dart';
 import 'package:easybook_app/core/network/dio_client.dart';
 import 'package:easybook_app/core/network/session_expiry_notifier.dart';
 import 'package:easybook_app/core/storage/token_storage.dart';
+import 'package:easybook_app/features/ai_assistant/data/datasources/chat_remote_data_source.dart';
+import 'package:easybook_app/features/ai_assistant/data/repositories/chat_repository_impl.dart';
+import 'package:easybook_app/features/ai_assistant/domain/repositories/chat_repository.dart';
+import 'package:easybook_app/features/ai_assistant/domain/usecases/send_chat_message.dart';
+import 'package:easybook_app/features/ai_assistant/presentation/bloc/chat_bloc.dart';
 import 'package:easybook_app/features/appointments/data/datasources/appointments_remote_data_source.dart';
 import 'package:easybook_app/features/appointments/data/repositories/appointments_repository_impl.dart';
 import 'package:easybook_app/features/appointments/domain/repositories/appointments_repository.dart';
@@ -60,7 +65,7 @@ void configureDependencies(AppConfig config) {
   _registerServices();
   _registerAppointments();
   _registerProfile();
-  // The AI assistant is added in its own step.
+  _registerAssistant();
 }
 
 void _registerCore(AppConfig config) {
@@ -172,4 +177,14 @@ void _registerProfile() {
     ..registerLazySingleton(() => ChangePassword(getIt()))
     ..registerFactory(() => EditProfileCubit(updateProfile: getIt()))
     ..registerFactory(() => ChangePasswordCubit(changePassword: getIt()));
+}
+
+void _registerAssistant() {
+  getIt
+    ..registerLazySingleton<ChatRemoteDataSource>(
+      () => ChatRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(getIt()))
+    ..registerLazySingleton(() => SendChatMessage(getIt()))
+    ..registerFactory(() => ChatBloc(sendChatMessage: getIt()));
 }

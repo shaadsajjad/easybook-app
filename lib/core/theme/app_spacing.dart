@@ -49,6 +49,13 @@ abstract final class AppSizes {
   static const double dayChipWidth = 64;
   static const double slotChipMinWidth = 96;
   static const double confirmationIcon = 88;
+
+  // Assistant chat.
+  static const double chatAvatar = 32;
+  static const double typingDot = 8;
+
+  /// A bubble takes at most this share of the screen width.
+  static const double chatBubbleWidthFactor = 0.78;
 }
 
 /// Width limits so pages look right on tablets.
