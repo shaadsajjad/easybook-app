@@ -11,15 +11,9 @@
   },
   "common": {
     "retry": "আবার চেষ্টা করুন",
-    "ok": "ঠিক আছে",
     "cancel": "বাতিল",
-    "close": "বন্ধ করুন",
-    "see_all": "সব দেখুন",
     "show_password": "পাসওয়ার্ড দেখান",
-    "hide_password": "পাসওয়ার্ড লুকান",
-    "loading": "লোড হচ্ছে…",
-    "nothing_here": "এখনও কিছু নেই",
-    "back": "ফিরে যান"
+    "hide_password": "পাসওয়ার্ড লুকান"
   },
   "errors": {
     "title": "কিছু একটা সমস্যা হয়েছে",
@@ -31,7 +25,6 @@
     "unavailable": "এটি এখন পাওয়া যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।"
   },
   "validation": {
-    "required": "এই ঘরটি পূরণ করা আবশ্যক",
     "email_required": "ইমেইল দিতে হবে",
     "email_invalid": "সঠিক ইমেইল ঠিকানা দিন",
     "name_required": "নাম দিতে হবে",
@@ -81,7 +74,7 @@
   },
   "services": {
     "greeting_morning": "শুভ সকাল, {name}",
-    "greeting_afternoon": "শুভ অপরাহ্ন, {name}",
+    "greeting_afternoon": "শুভ বিকেল, {name}",
     "greeting_evening": "শুভ সন্ধ্যা, {name}",
     "home_subtitle": "আজ কী বুক করতে চান?",
     "search_hint": "হেয়ারকাট, ম্যাসাজ, ক্লিনিং খুঁজুন…",
@@ -113,9 +106,9 @@
     "apply_filter": "ফলাফল দেখুন",
     "reset_filter": "রিসেট",
     "detail_about": "এই সেবা সম্পর্কে",
-    "detail_duration": "সময়",
+    "detail_duration": "সময়কাল",
     "detail_price": "দাম",
-    "detail_category": "ধরন",
+    "detail_category": "ক্যাটাগরি",
     "book_now": "এখনই বুক করুন",
     "starting_at": "মোট দাম",
     "not_found_title": "সেবাটি পাওয়া যাচ্ছে না",
@@ -123,7 +116,7 @@
     "back_home": "হোমে ফিরে যান"
   },
   "booking": {
-    "title": "সময় বেছে নিন",
+    "title": "সময় বুক করুন",
     "pick_date": "তারিখ বেছে নিন",
     "pick_time": "সময় বেছে নিন",
     "today": "আজ",
@@ -186,7 +179,6 @@
     "language_english": "English",
     "language_bengali": "বাংলা",
     "no_phone": "এখনও ফোন নম্বর নেই",
-    "member_since": "সদস্য হয়েছেন {date}",
     "logout_subtitle": "যেকোনো সময় আবার লগ ইন করতে পারবেন",
     "name_label": "পুরো নাম",
     "email_label": "ইমেইল",
@@ -194,7 +186,7 @@
     "phone_label": "ফোন (ঐচ্ছিক)",
     "phone_hint": "+8801712345678",
     "save": "পরিবর্তন সংরক্ষণ করুন",
-    "profile_updated": "প্রোফাইল হালনাগাদ হয়েছে",
+    "profile_updated": "প্রোফাইল আপডেট হয়েছে",
     "current_password_label": "বর্তমান পাসওয়ার্ড",
     "current_password_hint": "আপনার বর্তমান পাসওয়ার্ড",
     "new_password_label": "নতুন পাসওয়ার্ড",
@@ -202,7 +194,7 @@
     "confirm_password_label": "নতুন পাসওয়ার্ড নিশ্চিত করুন",
     "confirm_password_hint": "নতুন পাসওয়ার্ডটি আবার লিখুন",
     "password_rules": "কমপক্ষে ৮ অক্ষর, একটি অক্ষর ও একটি সংখ্যাসহ।",
-    "update_password": "পাসওয়ার্ড হালনাগাদ করুন",
+    "update_password": "পাসওয়ার্ড আপডেট করুন",
     "password_changed": "পাসওয়ার্ড পরিবর্তন হয়েছে। আপনি এখনও লগ ইন আছেন।"
   },
   "assistant": {
@@ -210,7 +202,7 @@
     "subtitle": "সেবা, দাম ও বুকিং নিয়ে জিজ্ঞেস করুন",
     "welcome_title": "হ্যালো {name}, কীভাবে সাহায্য করতে পারি?",
     "welcome_title_no_name": "হ্যালো, কীভাবে সাহায্য করতে পারি?",
-    "welcome_message": "আপনার কী দরকার বলুন, আমি দাম ও সময়সহ সঠিক সেবা সাজেস্ট করব।",
+    "welcome_message": "আপনার কী দরকার বলুন, আমি দাম ও সময়সহ সঠিক সেবার সুপারিশ করব।",
     "prompt_back": "ডেস্কে কাজ করে পিঠ শক্ত হয়ে গেছে। কী করা উচিত?",
     "prompt_haircut": "হেয়ারকাটের দাম কত আর কতক্ষণ লাগে?",
     "prompt_home": "এই সপ্তাহান্তে ফ্ল্যাট পরিষ্কার করাতে চাই।",
@@ -218,7 +210,6 @@
     "send": "বার্তা পাঠান",
     "typing": "সহকারী লিখছে",
     "retry": "আবার চেষ্টা করুন",
-    "open_service": "{service} খুলুন",
-    "you": "আপনি"
+    "open_service": "{service} খুলুন"
   }
 }

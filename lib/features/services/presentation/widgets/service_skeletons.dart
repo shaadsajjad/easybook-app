@@ -25,11 +25,21 @@ class ServiceCardSkeleton extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SkeletonBox(width: 80, height: 12),
+                  SkeletonBox(
+                    width: AppSizes.skeletonShort,
+                    height: AppSizes.skeletonLineSm,
+                  ),
                   SizedBox(height: AppSpacing.sm),
-                  SkeletonBox(width: double.infinity, height: 18),
+                  SkeletonBox(
+                    width: double.infinity,
+                    height: AppSizes.skeletonLineLg,
+                  ),
                   SizedBox(height: AppSpacing.md),
-                  SkeletonBox(width: 140, height: 22, radius: AppRadius.pill),
+                  SkeletonBox(
+                    width: AppSizes.skeletonMedium,
+                    height: AppSizes.skeletonPill,
+                    radius: AppRadius.pill,
+                  ),
                 ],
               ),
             ),

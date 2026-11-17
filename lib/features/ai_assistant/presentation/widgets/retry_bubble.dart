@@ -24,21 +24,31 @@ class RetryBubble extends StatelessWidget {
           border: Border.all(color: color.withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        child: Row(
+        // The button sits under the message, so long messages and large
+        // text never squeeze it off screen.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(Icons.error_outline_rounded, color: color),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                message,
-                style: context.textTheme.bodyMedium?.copyWith(color: color),
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.error_outline_rounded, color: color),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: context.textTheme.bodyMedium?.copyWith(color: color),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.sm),
-            TextButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: Text(LocaleKeys.assistant_retry.tr()),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(LocaleKeys.assistant_retry.tr()),
+              ),
             ),
           ],
         ),

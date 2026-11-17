@@ -12,6 +12,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.textSecondary,
     required this.surfaceMuted,
     required this.cardShadow,
+    required this.solidFill,
   });
 
   static const AppPalette light = AppPalette(
@@ -29,6 +30,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textSecondary: AppColors.lightTextSecondary,
     surfaceMuted: AppColors.lightSurfaceMuted,
     cardShadow: AppColors.shadow,
+    solidFill: AppColors.brandIndigo,
   );
 
   static const AppPalette dark = AppPalette(
@@ -46,6 +48,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textSecondary: AppColors.darkTextSecondary,
     surfaceMuted: AppColors.darkSurfaceMuted,
     cardShadow: AppColors.shadowDark,
+    solidFill: AppColors.brandIndigo,
   );
 
   /// Indigo -> violet, used for hero areas and the primary button.
@@ -60,6 +63,11 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color surfaceMuted;
   final Color cardShadow;
 
+  /// Background for solid controls with white content (selected chips,
+  /// the send button). Deep indigo in both themes, so white on it stays
+  /// readable; the dark theme's lighter `primary` is for text and icons.
+  final Color solidFill;
+
   @override
   AppPalette copyWith({
     LinearGradient? brandGradient,
@@ -68,6 +76,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? textSecondary,
     Color? surfaceMuted,
     Color? cardShadow,
+    Color? solidFill,
   }) {
     return AppPalette(
       brandGradient: brandGradient ?? this.brandGradient,
@@ -76,6 +85,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textSecondary: textSecondary ?? this.textSecondary,
       surfaceMuted: surfaceMuted ?? this.surfaceMuted,
       cardShadow: cardShadow ?? this.cardShadow,
+      solidFill: solidFill ?? this.solidFill,
     );
   }
 
@@ -93,6 +103,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       surfaceMuted: Color.lerp(surfaceMuted, other.surfaceMuted, t)!,
       cardShadow: Color.lerp(cardShadow, other.cardShadow, t)!,
+      solidFill: Color.lerp(solidFill, other.solidFill, t)!,
     );
   }
 }

@@ -89,6 +89,8 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 tooltip: LocaleKeys.assistant_send.tr(),
                 onPressed: _canSend ? _send : null,
                 style: IconButton.styleFrom(
+                  backgroundColor: context.palette.solidFill,
+                  foregroundColor: context.colors.onPrimary,
                   minimumSize: const Size.square(AppSizes.buttonHeight - 4),
                 ),
                 icon: const Icon(Icons.arrow_upward_rounded),

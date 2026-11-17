@@ -25,11 +25,21 @@ class BookingCardSkeleton extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SkeletonBox(width: double.infinity, height: 18),
+                  SkeletonBox(
+                    width: double.infinity,
+                    height: AppSizes.skeletonLineLg,
+                  ),
                   SizedBox(height: AppSpacing.sm),
-                  SkeletonBox(width: 140, height: 14),
+                  SkeletonBox(
+                    width: AppSizes.skeletonMedium,
+                    height: AppSizes.skeletonLineMd,
+                  ),
                   SizedBox(height: AppSpacing.md),
-                  SkeletonBox(width: 160, height: 22, radius: AppRadius.pill),
+                  SkeletonBox(
+                    width: AppSizes.skeletonLong,
+                    height: AppSizes.skeletonPill,
+                    radius: AppRadius.pill,
+                  ),
                 ],
               ),
             ),
