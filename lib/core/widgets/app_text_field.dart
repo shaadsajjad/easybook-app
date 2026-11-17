@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class _AppTextFieldState extends State<AppTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: context.textTheme.labelLarge),
+        Text(widget.label, style: context.textTheme.titleSmall),
         const SizedBox(height: AppSpacing.sm),
         TextFormField(
           controller: widget.controller,
@@ -105,7 +106,7 @@ class _AppTextFieldState extends State<AppTextField> {
           ? LocaleKeys.common_show_password.tr()
           : LocaleKeys.common_hide_password.tr(),
       icon: Icon(
-        _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+        _obscured ? AppIcons.visible : AppIcons.hidden,
         size: AppSizes.iconMd,
       ),
       onPressed: () => setState(() => _obscured = !_obscured),

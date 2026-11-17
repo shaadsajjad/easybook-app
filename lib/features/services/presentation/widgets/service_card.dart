@@ -1,7 +1,9 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/duration_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/app_network_image.dart';
+import 'package:easybook_app/core/widgets/pressable_scale.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/presentation/widgets/info_pill.dart';
 import 'package:easybook_app/features/services/presentation/widgets/price_tag.dart';
@@ -19,17 +21,7 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
-          BoxShadow(
-            color: context.palette.cardShadow,
-            blurRadius: AppElevation.cardBlur,
-            offset: const Offset(0, AppElevation.cardOffsetY),
-          ),
-        ],
-      ),
+    return PressableScale(
       child: Card(
         child: InkWell(
           onTap: onTap,
@@ -40,14 +32,14 @@ class ServiceCard extends StatelessWidget {
                 Hero(
                   tag: serviceHeroTag(service.id),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
                     child: SizedBox.square(
                       dimension: AppSizes.serviceThumb,
                       child: AppNetworkImage(url: service.imageUrl),
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.lg),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(child: _Details(service: service)),
               ],
             ),
@@ -77,15 +69,16 @@ class _Details extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.labelMedium?.copyWith(
                   color: context.colors.primary,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
             if (service.isFeatured) ...[
               const SizedBox(width: AppSpacing.xs),
               Icon(
-                Icons.star_rounded,
-                size: AppSizes.iconSm,
-                color: context.palette.accent,
+                AppIcons.featured,
+                size: AppSizes.iconSm - AppSpacing.xxs,
+                color: context.colors.primary,
               ),
             ],
           ],
@@ -98,19 +91,19 @@ class _Details extends StatelessWidget {
           style: context.textTheme.titleMedium,
         ),
         const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.xs,
-          crossAxisAlignment: WrapCrossAlignment.center,
+        Row(
           children: [
-            InfoPill(
-              icon: Icons.schedule_rounded,
-              label: DurationFormatter.format(
-                service.durationMinutes,
-                context.localeName,
+            Expanded(
+              child: InfoPill(
+                icon: AppIcons.duration,
+                label: DurationFormatter.format(
+                  service.durationMinutes,
+                  context.localeName,
+                ),
               ),
             ),
-            PriceTag(price: service.price),
+            const SizedBox(width: AppSpacing.sm),
+            PriceTag(price: service.price, filled: true),
           ],
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class ProfileMenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = destructive ? context.colors.error : context.colors.primary;
+    final color = destructive ? context.colors.error : context.colors.onSurface;
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(
@@ -33,10 +34,16 @@ class ProfileMenuTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppRadius.sm),
+          color: destructive
+              ? color.withValues(alpha: 0.1)
+              : context.palette.hero,
+          borderRadius: BorderRadius.circular(AppRadius.md),
         ),
-        child: Icon(icon, color: color, size: AppSizes.iconMd),
+        child: Icon(
+          icon,
+          color: destructive ? color : context.palette.accent,
+          size: AppSizes.iconSm + AppSpacing.xxs,
+        ),
       ),
       title: Text(
         title,
@@ -47,10 +54,7 @@ class ProfileMenuTile extends StatelessWidget {
       subtitle: subtitle == null ? null : Text(subtitle!),
       trailing: destructive
           ? null
-          : Icon(
-              Icons.chevron_right_rounded,
-              color: context.palette.textSecondary,
-            ),
+          : Icon(AppIcons.chevronRight, color: context.palette.textSecondary),
     );
   }
 }

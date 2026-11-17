@@ -1,8 +1,9 @@
 import 'package:easybook_app/core/theme/app_spacing.dart';
-import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
 
-/// The assistant's round gradient avatar with a sparkle.
+/// The assistant's avatar: the EasyBook logo, so it is clearly the app
+/// speaking.
 class AssistantAvatar extends StatelessWidget {
   const new({this.size = AppSizes.chatAvatar, super.key});
 
@@ -10,18 +11,6 @@ class AssistantAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        gradient: context.palette.brandGradient,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        Icons.auto_awesome_rounded,
-        size: size * 0.55,
-        color: context.colors.onPrimary,
-      ),
-    );
+    return ExcludeSemantics(child: AppLogo(size: size));
   }
 }

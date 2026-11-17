@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,11 @@ class _ServiceSearchBarState extends State<ServiceSearchBar> {
     setState(() {});
   }
 
+  static final OutlineInputBorder _pill = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(AppRadius.pill),
+    borderSide: BorderSide.none,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -52,13 +58,22 @@ class _ServiceSearchBarState extends State<ServiceSearchBar> {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               hintText: LocaleKeys.services_search_hint.tr(),
+              // A white pill floating on the ink hero.
               fillColor: context.colors.surface,
-              prefixIcon: const Icon(Icons.search_rounded),
+              border: _pill,
+              enabledBorder: _pill,
+              focusedBorder: _pill.copyWith(
+                borderSide: BorderSide(
+                  color: context.palette.accent,
+                  width: AppSizes.borderThick * 2,
+                ),
+              ),
+              prefixIcon: const Icon(AppIcons.search),
               suffixIcon: _controller.text.isEmpty
                   ? null
                   : IconButton(
                       tooltip: LocaleKeys.services_clear_search.tr(),
-                      icon: const Icon(Icons.close_rounded),
+                      icon: const Icon(AppIcons.close),
                       onPressed: _clear,
                     ),
             ),
@@ -82,22 +97,38 @@ class _FilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Badge(
-      isLabelVisible: active,
-      backgroundColor: context.palette.accent,
-      smallSize: AppSpacing.md,
-      child: IconButton.filled(
+    final palette = context.palette;
+    // Turns lime, with a spin of the icon, while a price range is active.
+    return AnimatedContainer(
+      duration: AppDurations.slow,
+      curve: AppMotion.standard,
+      decoration: BoxDecoration(
+        color: active ? palette.solidFill : palette.heroRaised,
+        shape: BoxShape.circle,
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: palette.glow,
+                  blurRadius: AppElevation.cardBlur,
+                ),
+              ]
+            : null,
+      ),
+      child: IconButton(
         tooltip: LocaleKeys.services_filter_tooltip.tr(),
         onPressed: onPressed,
         style: IconButton.styleFrom(
-          backgroundColor: context.colors.surface,
-          foregroundColor: context.colors.primary,
           minimumSize: const Size.square(AppSizes.buttonHeight),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        icon: AnimatedRotation(
+          turns: active ? 0.5 : 0,
+          duration: AppDurations.slow,
+          curve: AppMotion.enter,
+          child: Icon(
+            AppIcons.filter,
+            color: active ? palette.onSolidFill : palette.onHero,
           ),
         ),
-        icon: const Icon(Icons.tune_rounded),
       ),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easybook_app/app/shell/app_nav_bar.dart';
+import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_router.dart';
@@ -67,14 +69,17 @@ void main() {
     final router = createAppRouter(authBloc);
     addTearDown(router.dispose);
     await tester.pumpWidget(
-      BlocProvider<AuthBloc>.value(
-        value: authBloc,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>.value(value: authBloc),
+          BlocProvider(create: (_) => ThemeModeCubit()),
+        ],
         child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
       ),
     );
     await tester.pump();
 
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(AppNavBar), findsOneWidget);
     expect(router.state.matchedLocation, '/home');
 
     final tabs = {
@@ -85,10 +90,7 @@ void main() {
     };
     for (final MapEntry(key: label, value: path) in tabs.entries) {
       await tester.tap(
-        find.descendant(
-          of: find.byType(NavigationBar),
-          matching: find.text(label),
-        ),
+        find.descendant(of: find.byType(AppNavBar), matching: find.text(label)),
       );
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

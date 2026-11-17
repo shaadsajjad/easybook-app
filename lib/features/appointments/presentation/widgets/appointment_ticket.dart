@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
+import 'package:easybook_app/core/utils/booking_reference.dart';
 import 'package:easybook_app/core/utils/date_formatter.dart';
 import 'package:easybook_app/core/utils/duration_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
@@ -23,99 +25,85 @@ class AppointmentTicket extends StatelessWidget {
     final service = appointment.service;
     final notes = appointment.notes;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
-          BoxShadow(
-            color: context.palette.cardShadow,
-            blurRadius: AppElevation.cardBlur,
-            offset: const Offset(0, AppElevation.cardOffsetY),
-          ),
-        ],
-      ),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    child: SizedBox.square(
-                      dimension: AppSizes.avatar,
-                      child: AppNetworkImage(url: service.imageUrl),
-                    ),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  child: SizedBox.square(
+                    dimension: AppSizes.avatar,
+                    child: AppNetworkImage(url: service.imageUrl),
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          service.category,
-                          style: context.textTheme.labelMedium?.copyWith(
-                            color: context.colors.primary,
-                          ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.category,
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: context.colors.primary,
                         ),
-                        Text(
-                          service.name,
-                          style: context.textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
+                      ),
+                      Text(service.name, style: context.textTheme.titleMedium),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppointmentStatusChip(status: appointment.status),
-              const _DashedDivider(),
-              _Row(
-                icon: Icons.calendar_today_rounded,
-                label: LocaleKeys.booking_detail_date.tr(),
-                value: DateFormatter.fullDate(appointment.startTime, locale),
-              ),
-              _Row(
-                icon: Icons.schedule_rounded,
-                label: LocaleKeys.booking_detail_time.tr(),
-                value: DateFormatter.timeRange(
-                  appointment.startTime,
-                  appointment.endTime,
-                  locale,
                 ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppointmentStatusChip(status: appointment.status),
+            const _DashedDivider(),
+            _Row(
+              icon: AppIcons.date,
+              label: LocaleKeys.booking_detail_date.tr(),
+              value: DateFormatter.fullDate(appointment.startTime, locale),
+            ),
+            _Row(
+              icon: AppIcons.duration,
+              label: LocaleKeys.booking_detail_time.tr(),
+              value: DateFormatter.timeRange(
+                appointment.startTime,
+                appointment.endTime,
+                locale,
               ),
+            ),
+            _Row(
+              icon: AppIcons.timeSpan,
+              label: LocaleKeys.booking_detail_duration.tr(),
+              value: DurationFormatter.format(service.durationMinutes, locale),
+            ),
+            _Row(
+              icon: AppIcons.price,
+              label: LocaleKeys.booking_detail_price.tr(),
+              value: PriceFormatter.format(service.price, locale: locale),
+            ),
+            if (notes != null && notes.isNotEmpty)
               _Row(
-                icon: Icons.timelapse_rounded,
-                label: LocaleKeys.booking_detail_duration.tr(),
-                value: DurationFormatter.format(
-                  service.durationMinutes,
-                  locale,
-                ),
+                icon: AppIcons.notes,
+                label: LocaleKeys.booking_detail_notes.tr(),
+                value: notes,
               ),
-              _Row(
-                icon: Icons.payments_outlined,
-                label: LocaleKeys.booking_detail_price.tr(),
-                value: PriceFormatter.format(service.price, locale: locale),
+            const _DashedDivider(),
+            Text(
+              LocaleKeys.booking_detail_reference.tr(),
+              style: context.textTheme.bodySmall,
+            ),
+            // A short number like "B-26047" instead of the long UUID.
+            SelectableText(
+              BookingReference.format(
+                id: appointment.id,
+                createdAt: appointment.createdAt,
               ),
-              if (notes != null && notes.isNotEmpty)
-                _Row(
-                  icon: Icons.sticky_note_2_outlined,
-                  label: LocaleKeys.booking_detail_notes.tr(),
-                  value: notes,
-                ),
-              const _DashedDivider(),
-              Text(
-                LocaleKeys.booking_detail_reference.tr(),
-                style: context.textTheme.bodySmall,
-              ),
-              SelectableText(
-                appointment.id,
-                style: context.textTheme.labelMedium,
-              ),
-            ],
-          ),
+              style: context.textTheme.titleLarge,
+            ),
+          ],
         ),
       ),
     );
@@ -136,7 +124,11 @@ class _Row extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: AppSizes.iconSm, color: context.colors.primary),
+          Icon(
+            icon,
+            size: AppSizes.iconSm,
+            color: context.palette.textSecondary,
+          ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(

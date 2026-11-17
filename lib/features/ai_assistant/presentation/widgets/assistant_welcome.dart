@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
+import 'package:easybook_app/core/widgets/pressable_scale.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/ai_assistant/presentation/widgets/assistant_avatar.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +31,9 @@ class AssistantWelcome extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: AppSpacing.xl),
-            const AssistantAvatar(size: AppSizes.confirmationIcon),
+            const FadeSlideIn(
+              child: AssistantAvatar(size: AppSizes.logoLg * 0.75),
+            ),
             const SizedBox(height: AppSpacing.xl),
             Text(
               name == null || name.isEmpty
@@ -48,8 +53,11 @@ class AssistantWelcome extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
-            for (final prompt in prompts) ...[
-              _PromptCard(text: prompt, onTap: () => onPrompt(prompt)),
+            for (final (index, prompt) in prompts.indexed) ...[
+              FadeSlideIn(
+                index: index + 1,
+                child: _PromptCard(text: prompt, onTap: () => onPrompt(prompt)),
+              ),
               const SizedBox(height: AppSpacing.sm),
             ],
           ],
@@ -67,26 +75,30 @@ class _PromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Row(
-            children: [
-              Icon(
-                Icons.chat_bubble_outline_rounded,
-                size: AppSizes.iconSm,
-                color: context.colors.primary,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: Text(text, style: context.textTheme.bodyMedium)),
-              Icon(
-                Icons.north_east_rounded,
-                size: AppSizes.iconSm,
-                color: context.palette.textSecondary,
-              ),
-            ],
+    return PressableScale(
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Row(
+              children: [
+                Icon(
+                  AppIcons.prompt,
+                  size: AppSizes.iconSm,
+                  color: context.colors.primary,
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(text, style: context.textTheme.bodyMedium),
+                ),
+                Icon(
+                  AppIcons.openExternal,
+                  size: AppSizes.iconSm,
+                  color: context.palette.textSecondary,
+                ),
+              ],
+            ),
           ),
         ),
       ),

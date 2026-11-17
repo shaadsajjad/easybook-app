@@ -52,6 +52,8 @@ void main() {
     await pumpView(tester, const ChatState());
 
     expect(find.text(LocaleKeys.assistant_welcome_title), findsOneWidget);
+    // Let the cards finish their entrance animation before tapping.
+    await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text(LocaleKeys.assistant_prompt_haircut));
 
     verify(

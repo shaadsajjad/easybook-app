@@ -17,8 +17,8 @@ class StatusChip extends StatelessWidget {
     final foreground = StatusColors.foreground(tone, brightness);
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
+        horizontal: AppSpacing.sm + AppSpacing.xxs,
+        vertical: AppSpacing.xxs + 1,
       ),
       decoration: BoxDecoration(
         color: StatusColors.background(tone, brightness),
@@ -28,20 +28,23 @@ class StatusChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: AppSpacing.sm,
-            height: AppSpacing.sm,
+            width: AppSpacing.xs + AppSpacing.xxs,
+            height: AppSpacing.xs + AppSpacing.xxs,
             decoration: BoxDecoration(
               color: foreground,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: AppSpacing.xs + AppSpacing.xxs),
+          const SizedBox(width: AppSpacing.xs + AppSpacing.xxs / 2),
           Flexible(
             child: Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: context.textTheme.labelMedium?.copyWith(color: foreground),
+              style: context.textTheme.labelMedium?.copyWith(
+                color: foreground,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

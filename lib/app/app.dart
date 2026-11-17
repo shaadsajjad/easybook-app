@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_router.dart';
@@ -63,17 +64,24 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _authBloc,
-      child: MaterialApp.router(
-        onGenerateTitle: (_) => LocaleKeys.app_name.tr(),
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        routerConfig: _router,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _authBloc),
+        BlocProvider(create: (_) => ThemeModeCubit()),
+      ],
+      // Light, dark or follow the phone, as picked in Profile > Appearance.
+      child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+        builder: (context, themeMode) => MaterialApp.router(
+          onGenerateTitle: (_) => LocaleKeys.app_name.tr(),
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: themeMode,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          routerConfig: _router,
+        ),
       ),
     );
   }

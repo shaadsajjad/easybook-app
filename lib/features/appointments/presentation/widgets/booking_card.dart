@@ -1,6 +1,8 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/date_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/pressable_scale.dart';
 import 'package:easybook_app/features/appointments/domain/entities/appointment.dart';
 import 'package:easybook_app/features/appointments/presentation/widgets/appointment_status_chip.dart';
 import 'package:easybook_app/features/services/presentation/widgets/info_pill.dart';
@@ -19,24 +21,14 @@ class BookingCard extends StatelessWidget {
 
   final Appointment appointment;
 
-  /// Gradient date block for upcoming bookings, muted for past ones.
+  /// Brand-tinted date block for upcoming bookings, muted for past ones.
   final bool highlightDate;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final locale = context.localeName;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: [
-          BoxShadow(
-            color: context.palette.cardShadow,
-            blurRadius: AppElevation.cardBlur,
-            offset: const Offset(0, AppElevation.cardOffsetY),
-          ),
-        ],
-      ),
+    return PressableScale(
       child: Card(
         child: InkWell(
           onTap: onTap,
@@ -64,7 +56,7 @@ class BookingCard extends StatelessWidget {
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         InfoPill(
-                          icon: Icons.schedule_rounded,
+                          icon: AppIcons.duration,
                           label: DateFormatter.timeRange(
                             appointment.startTime,
                             appointment.endTime,
@@ -85,7 +77,7 @@ class BookingCard extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    AppIcons.chevronRight,
                     color: context.palette.textSecondary,
                   ),
                 ],
@@ -107,20 +99,17 @@ class _DateBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = context.localeName;
-    final strong = highlight
-        ? context.colors.onPrimary
-        : context.colors.onSurface;
-    final soft = highlight
-        ? context.colors.onPrimary.withValues(alpha: 0.85)
-        : context.palette.textSecondary;
+    final palette = context.palette;
+    // Upcoming: an ink block with a lime day number. Past: muted.
+    final strong = highlight ? palette.accent : context.colors.onSurface;
+    final soft = highlight ? palette.onHeroMuted : palette.textSecondary;
 
     return Container(
       width: AppSizes.dayChipWidth,
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       decoration: BoxDecoration(
-        gradient: highlight ? context.palette.brandGradient : null,
-        color: highlight ? null : context.palette.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: highlight ? palette.hero : palette.surfaceMuted,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

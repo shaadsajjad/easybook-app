@@ -1,10 +1,16 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/app_logo.dart';
+import 'package:easybook_app/core/widgets/aurora_background.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
+import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/auth/presentation/widgets/language_toggle.dart';
 import 'package:flutter/material.dart';
 
-/// The gradient hero at the top of the login and register screens.
+/// The aurora hero at the top of the login and register screens: logo,
+/// language switch, then a big title and subtitle.
 class AuthHeader extends StatelessWidget {
   const new({required this.title, required this.subtitle, super.key});
 
@@ -13,56 +19,59 @@ class AuthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: context.palette.brandGradient,
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(AppRadius.xl),
-        ),
-      ),
+    final palette = context.palette;
+    return AuroraBackground(
       child: SafeArea(
         bottom: false,
-        child: Padding(
+        child: ResponsiveCenter(
+          maxWidth: AppBreakpoints.maxFormWidth,
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.page,
-            AppSpacing.lg,
+            AppSpacing.md,
             AppSpacing.page,
-            AppSpacing.xxl,
+            AppSpacing.xxxl + AppSpacing.md,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.sm),
-                    decoration: BoxDecoration(
-                      color: onGradient.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(AppRadius.md),
+              FadeSlideIn(
+                offset: -AppMotion.entranceOffset,
+                child: Row(
+                  children: [
+                    const AppLogo(size: AppSizes.logoSm),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        LocaleKeys.app_name.tr(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.titleLarge?.copyWith(
+                          color: palette.onHero,
+                        ),
+                      ),
                     ),
-                    child: const AppLogo(
-                      size: AppSizes.logoSm,
-                      showBackground: false,
-                    ),
-                  ),
-                  const Spacer(),
-                  const LanguageToggle(),
-                ],
+                    const LanguageToggle(),
+                  ],
+                ),
               ),
-              const SizedBox(height: AppSpacing.xxl),
-              Text(
-                title,
-                style: context.textTheme.headlineMedium?.copyWith(
-                  color: onGradient,
+              const SizedBox(height: AppSpacing.xxxl),
+              FadeSlideIn(
+                index: 1,
+                child: Text(
+                  title,
+                  style: context.textTheme.displaySmall?.copyWith(
+                    color: palette.onHero,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                subtitle,
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: onGradient.withValues(alpha: 0.85),
+              FadeSlideIn(
+                index: 2,
+                child: Text(
+                  subtitle,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: palette.onHeroMuted,
+                  ),
                 ),
               ),
             ],

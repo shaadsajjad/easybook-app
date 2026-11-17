@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/constants/app_constants.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -71,10 +72,6 @@ class _ChatInputBarState extends State<ChatInputBar> {
                 decoration: InputDecoration(
                   hintText: LocaleKeys.assistant_input_hint.tr(),
                   counterText: length >= _counterFrom ? null : '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                    borderSide: BorderSide.none,
-                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg,
                     vertical: AppSpacing.md,
@@ -85,15 +82,26 @@ class _ChatInputBarState extends State<ChatInputBar> {
             const SizedBox(width: AppSpacing.sm),
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.xxs),
-              child: IconButton.filled(
-                tooltip: LocaleKeys.assistant_send.tr(),
-                onPressed: _canSend ? _send : null,
-                style: IconButton.styleFrom(
-                  backgroundColor: context.palette.solidFill,
-                  foregroundColor: context.colors.onPrimary,
-                  minimumSize: const Size.square(AppSizes.buttonHeight - 4),
+              // Pops up and turns lime as soon as there is text to send.
+              child: AnimatedScale(
+                scale: _canSend ? 1 : 0.85,
+                duration: AppDurations.slow,
+                curve: AppMotion.pop,
+                child: AnimatedRotation(
+                  turns: _canSend ? 0 : -0.125,
+                  duration: AppDurations.slow,
+                  curve: AppMotion.enter,
+                  child: IconButton.filled(
+                    tooltip: LocaleKeys.assistant_send.tr(),
+                    onPressed: _canSend ? _send : null,
+                    style: IconButton.styleFrom(
+                      backgroundColor: context.palette.solidFill,
+                      foregroundColor: context.palette.onSolidFill,
+                      minimumSize: const Size.square(AppSizes.buttonHeight - 4),
+                    ),
+                    icon: const Icon(AppIcons.send),
+                  ),
                 ),
-                icon: const Icon(Icons.arrow_upward_rounded),
               ),
             ),
           ],

@@ -32,57 +32,58 @@ The developer commits and pushes each branch. Each new branch starts from an up-
 | 9 | `chore/polish` | `chore: polish states, dark mode, a11y, Bengali review` |
 | 10 | `chore/release` | `docs: README, screenshots, release APK` |
 
-## 2. Design direction ("awesome and lucrative")
+## 2. Design direction
 
-**Mood:** premium, calm, trustworthy. Lots of white space, big rounded cards, soft shadows, one vivid
-gradient used sparingly for hero areas and primary buttons.
+> Revised in the UI redesign (`feature/ui-redesign`). The first version (indigo/violet gradients, coral
+> pills, sparkle icons) looked generic. The app now has a bold, high-contrast identity with motion
+> everywhere, built without any animation package.
 
-**Palette** (all in `app_colors.dart`)
+**Mood:** bold and energetic. Near-black "ink" hero areas with a slowly drifting aurora glow, electric
+lime for every call to action (always with ink text on it), big heavy headlines, pill buttons and big
+rounded cards on a warm off-white background.
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `brandIndigo` (seed) | `#4F46E5` | same seed | ColorScheme.fromSeed |
-| `brandViolet` | `#7C3AED` | `#8B5CF6` | gradient end |
-| `accentCoral` | `#FF6B5A` | `#FF8A7A` | price tags, the logo's check, highlights |
-| `surface` | `#F7F7FB` | `#0F1020` | page background |
-| `card` | `#FFFFFF` | `#1A1B2E` | cards |
-| status PENDING | amber `#F59E0B` | | chip + label |
-| status CONFIRMED | indigo `#4F46E5` | | chip + label |
-| status COMPLETED | green `#10B981` | | chip + label |
-| status CANCELLED | slate `#94A3B8` | | chip + label |
+**Palette** (raw values only in `app_colors.dart`; widgets read `ColorScheme` or `context.palette`)
 
-**Brand gradient:** `#4F46E5 -> #7C3AED`, top-left to bottom-right. Used on: splash, login header,
-home greeting header, primary button, logo.
+| Token | Value | Use |
+|---|---|---|
+| `ink` | `#0D0F14` | hero areas, nav bar, bottom bars, user chat bubbles, selected date |
+| `lime` | `#C6F24E` | primary buttons, selected chips/slots, badges, price pills, nav indicator |
+| `limeDeep` | `#3F6212` | lime-family text/icons on light surfaces (light-theme `primary`) |
+| aurora | lime `#B4F03A`, teal `#14B8A6`, sky `#38BDF8` | moving glow behind hero areas |
+| background | `#F4F5F0` / dark `#07080B` | page background |
+| surface | `#FFFFFF` / dark `#12141A` | cards, inputs |
+| status | amber / blue / green / slate | always chip + label |
 
-**Typography:** Material 3 scale with tighter, bolder headlines (w700/w800, slight negative letter spacing)
-and comfortable body text. Default font is the platform font (Roboto / SF), which also renders Bengali
-correctly. (A bundled font like Plus Jakarta Sans is optional, see Open questions.)
+**Typography:** platform font (Roboto / SF, renders Bengali correctly). Headlines w800 (display 38,
+headline 30/24), titles w700. No negative letter spacing (it breaks Bengali).
 
-**Shapes and spacing:** 4-pt grid (`xs 4, sm 8, md 12, lg 16, xl 24, xxl 32`), radius `sm 10, md 16, lg 24`,
-pill-shaped chips and buttons, 52dp tall buttons and inputs.
+**Shapes:** radius `xs 8, sm 12, md 16, lg 22, xl 30`; stadium (pill) buttons 56dp tall; spacing on
+the 4-pt grid.
 
-**Signature UI pieces**
-- Gradient header on Home with greeting ("Good morning, Ayesha"), a floating search bar overlapping it.
-- Featured carousel: large image cards with a dark bottom gradient, name, duration and a coral price pill.
-- Service grid/list cards with `Hero` image animation into the detail page.
-- Detail page: collapsing `SliverAppBar` image, info chips (duration, category), sticky bottom "Book now" bar with price.
-- Booking: horizontal 14-day date strip (day name + number), slot grid of pill buttons (selected = gradient,
-  unavailable = faded with strike), sticky confirm bar.
-- Confirmation: animated check in a gradient circle, ticket-style summary card.
-- My Bookings: segmented tabs, ticket-style cards with a date block on the left and a status chip.
-- Assistant: chat bubbles (user = gradient, assistant = card), three-dot typing animation, suggestion chips.
-- Skeleton loaders (a small in-house shimmer widget, no dependency) instead of plain spinners on lists.
-- Light and dark themes, following the system.
+**Icons:** one Material family, referenced only through `core/theme/app_icons.dart` by meaning.
+Outlined everywhere; the filled variant marks the selected bottom-navigation tab.
 
-**App logo:** a rounded-square (squircle) icon filled with the brand gradient. Inside, a white calendar
-(two binder rings on top) and a bold coral check mark where the date grid would be: "booked, easy".
-Each flavor has its own background so test installs are easy to tell apart: production indigo -> violet,
-staging dark slate, development teal -> green. Generated at 1024px by `tool/generate_icons.py`, written to:
-- Android: `mipmap-*/ic_launcher.png` + adaptive icon (gradient background, vector foreground, themed-icon monochrome)
-  and the launch screen (brand color + glyph)
-- iOS: `ios/Runner/Assets.xcassets/AppIcon.appiconset/*` (full-bleed, no transparency, as Apple requires)
-- iOS launch screen (brand color + glyph). Inside the app the logo is drawn in code (`core/widgets/app_logo.dart`),
-  so no image asset is needed.
+**Motion toolkit** (`core/widgets`, tokens in `AppDurations` / `AppMotion`)
+- `AuroraBackground`: ink + three colored lights drifting on a 12 s loop + a faint dot grid.
+- `FadeSlideIn`: springy entrance (fade, rise, scale from 90% with overshoot), staggered by index.
+- `PressableScale`: squash on press, elastic bounce back.
+- `PulseRings`: radar-like expanding rings (splash logo, success badge, avatar, typing, empty states).
+- `ConfettiBurst`: one-shot confetti with gravity and spin (booking confirmed).
+- `AppButton` primary: lime glow + a light sweep across it every few seconds.
+- `AppPageTransitionsBuilder` (`core/theme`): zoom + fade + rise between pages on Android;
+  iOS keeps the native slide so swipe-back works.
+- `AppNavBar` (`app/shell`): floating ink bar, lime pill slides to the tab, icon pops and spins in.
+- Feature motion: logo builds itself on the splash, featured carousel with 3D tilt + photo parallax +
+  stretching dots, slot/date chips pop when picked, filter button spins lime, chat messages slide in
+  from their side, send button pops when there is text, booking check draws itself.
+- Every effect respects the system "remove animations" setting (`MediaQuery.disableAnimationsOf`);
+  widget tests run with it on (`test/helpers/pump_app.dart`) so `pumpAndSettle` settles.
+
+**App logo:** an ink rounded square holding a lime calendar page; the header line, the gaps around the
+binder rings and the check mark are cut out. Flavors: production ink + lime, staging slate + white,
+development amber + white. Generated at 1024px by `tool/generate_icons.py` (Android mipmaps, adaptive
+icon with a monochrome themed icon, iOS `.icon` bundles, both launch screens). Inside the app the logo
+is drawn in code (`core/widgets/app_logo.dart`) and can animate its own construction (`progress`).
 
 ## 3. Failure hierarchy (`core/error/failures.dart`)
 

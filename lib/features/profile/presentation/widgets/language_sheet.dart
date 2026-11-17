@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/app_locales.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -57,8 +58,8 @@ class _LanguageOption extends StatelessWidget {
       title: Text(LanguageSheet.labelFor(locale)),
       selected: selected,
       trailing: selected
-          ? Icon(Icons.check_circle_rounded, color: context.colors.primary)
-          : const Icon(Icons.circle_outlined),
+          ? Icon(AppIcons.radioOn, color: context.colors.primary)
+          : const Icon(AppIcons.radioOff),
       onTap: () async {
         await context.setLocale(locale);
         if (context.mounted) Navigator.of(context).pop();

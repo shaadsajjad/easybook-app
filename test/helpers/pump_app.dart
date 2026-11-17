@@ -7,7 +7,14 @@ extension PumpApp on WidgetTester {
   ///
   /// Translations are not loaded in widget tests, so `tr()` returns the
   /// key itself (for example `common.retry`). Tests can find text by key.
+  ///
+  /// Runs with the system "remove animations" setting on, like a user with
+  /// reduced motion: entrances finish at once and looping effects (button
+  /// shine, aurora, pulses) stay still, so `pumpAndSettle` can settle.
   Future<void> pumpApp(Widget widget) {
+    platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(platformDispatcher.clearAccessibilityFeaturesTestValue);
     return pumpWidget(
       MaterialApp(
         theme: AppTheme.light,

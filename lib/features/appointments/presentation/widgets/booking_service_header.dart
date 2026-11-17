@@ -1,3 +1,4 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/duration_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
@@ -40,7 +41,7 @@ class BookingServiceHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   InfoPill(
-                    icon: Icons.schedule_rounded,
+                    icon: AppIcons.duration,
                     label: DurationFormatter.format(
                       service.durationMinutes,
                       context.localeName,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/date_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
@@ -31,8 +32,11 @@ class BookingSummaryBar extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(top: BorderSide(color: context.colors.outline)),
+        // An ink panel with rounded top corners.
+        color: context.palette.hero,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -50,20 +54,36 @@ class BookingSummaryBar extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.event_available_rounded,
+                    AppIcons.slotChosen,
                     size: AppSizes.iconSm,
                     color: slot == null
-                        ? context.palette.textSecondary
-                        : context.colors.primary,
+                        ? context.palette.onHeroMuted
+                        : context.palette.accent,
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
-                    child: Text(
-                      summary,
-                      style: context.textTheme.titleSmall?.copyWith(
-                        color: slot == null
-                            ? context.palette.textSecondary
-                            : null,
+                    // The summary slides in fresh each time a time is picked.
+                    child: AnimatedSwitcher(
+                      duration: AppDurations.medium,
+                      transitionBuilder: (child, animation) => SlideTransition(
+                        position: Tween(
+                          begin: const Offset(0, 0.5),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      layoutBuilder: (current, previous) => Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [...previous, ?current],
+                      ),
+                      child: Text(
+                        summary,
+                        key: ValueKey(summary),
+                        style: context.textTheme.titleSmall?.copyWith(
+                          color: slot == null
+                              ? context.palette.onHeroMuted
+                              : context.palette.onHero,
+                        ),
                       ),
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class RetryBubble extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.error_outline_rounded, color: color),
+                Icon(AppIcons.error, color: color),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
@@ -46,7 +47,7 @@ class RetryBubble extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
+                icon: const Icon(AppIcons.retry),
                 label: Text(LocaleKeys.assistant_retry.tr()),
               ),
             ),

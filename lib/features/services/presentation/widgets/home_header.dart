@@ -2,13 +2,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/aurora_background.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Gradient top of Home: a greeting for the time of day, the user's
-/// initials and the search bar.
+/// The aurora hero on top of Home: a greeting for the time of day, the
+/// user's initials in a lime ring, and the search bar.
 class HomeHeader extends StatelessWidget {
   const new({required this.searchBar, super.key});
 
@@ -22,24 +24,21 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     final user = context.select<AuthBloc, AuthState>((bloc) => bloc.state).user;
-    final onGradient = context.colors.onPrimary;
     final greeting = _greetingKey(DateTime.now().hour)
         .tr(namedArgs: {'name': user?.firstName ?? ''});
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: context.palette.brandGradient,
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(AppRadius.xl),
-        ),
+    return AuroraBackground(
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(AppRadius.xl + AppSpacing.xs),
       ),
       child: SafeArea(
         bottom: false,
         child: ResponsiveCenter(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.page,
-            AppSpacing.lg,
+            AppSpacing.md,
             AppSpacing.page,
             AppSpacing.xl,
           ),
@@ -47,46 +46,73 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          greeting,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textTheme.headlineSmall?.copyWith(
-                            color: onGradient,
+                        FadeSlideIn(
+                          child: Text(
+                            greeting,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.headlineMedium?.copyWith(
+                              color: palette.onHero,
+                            ),
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          LocaleKeys.services_home_subtitle.tr(),
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: onGradient.withValues(alpha: 0.85),
+                        FadeSlideIn(
+                          index: 1,
+                          child: Text(
+                            LocaleKeys.services_home_subtitle.tr(),
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: palette.onHeroMuted,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
-                  CircleAvatar(
-                    radius: AppSizes.avatar / 2.4,
-                    backgroundColor: context.palette.solidFill,
-                    child: Text(
-                      user?.initials ?? '',
-                      style: context.textTheme.titleSmall?.copyWith(
-                        color: onGradient,
-                      ),
-                    ),
+                  FadeSlideIn(
+                    axis: Axis.horizontal,
+                    child: _Avatar(initials: user?.initials ?? ''),
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.xl),
-              searchBar,
+              const SizedBox(height: AppSpacing.lg),
+              FadeSlideIn(index: 2, child: searchBar),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Initials in a lime ring.
+class _Avatar extends StatelessWidget {
+  const new({required this.initials});
+
+  final String initials;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.xxs + 1),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: palette.accent, width: AppSizes.borderThick),
+      ),
+      child: CircleAvatar(
+        radius: AppSizes.avatarSm / 2,
+        backgroundColor: palette.heroRaised,
+        child: Text(
+          initials,
+          style: context.textTheme.titleMedium?.copyWith(color: palette.accent),
         ),
       ),
     );

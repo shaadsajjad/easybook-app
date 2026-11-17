@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/theme/app_theme.dart';
 import 'package:easybook_app/core/utils/form_status.dart';
@@ -185,8 +186,13 @@ List<_Screen> _screens() {
     ),
   );
 
-  Widget withAuth(AuthBloc bloc, Widget child) =>
-      BlocProvider<AuthBloc>.value(value: bloc, child: child);
+  Widget withAuth(AuthBloc bloc, Widget child) => MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthBloc>.value(value: bloc),
+      BlocProvider(create: (_) => ThemeModeCubit()),
+    ],
+    child: child,
+  );
 
   return [
     (

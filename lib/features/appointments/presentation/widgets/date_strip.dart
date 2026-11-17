@@ -58,12 +58,10 @@ class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = context.localeName;
-    final foreground = selected
-        ? context.colors.onPrimary
-        : context.colors.onSurface;
-    final muted = selected
-        ? context.colors.onPrimary.withValues(alpha: 0.85)
-        : context.palette.textSecondary;
+    final palette = context.palette;
+    // Selected: an ink tile with a lime day number that pops up.
+    final foreground = selected ? palette.accent : context.colors.onSurface;
+    final muted = selected ? palette.onHeroMuted : palette.textSecondary;
 
     return Semantics(
       button: true,
@@ -72,41 +70,63 @@ class _DayChip extends StatelessWidget {
       child: ExcludeSemantics(
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          child: AnimatedContainer(
-            duration: AppDurations.fast,
-            width: AppSizes.dayChipWidth,
-            decoration: BoxDecoration(
-              gradient: selected ? context.palette.brandGradient : null,
-              color: selected ? null : context.colors.surface,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: selected
-                  ? null
-                  : Border.all(color: context.colors.outline),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  isToday
-                      ? LocaleKeys.booking_today.tr()
-                      : DateFormatter.weekdayShort(day, locale),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.labelSmall?.copyWith(color: muted),
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          child: AnimatedScale(
+            scale: selected ? 1 : 0.9,
+            duration: AppDurations.slow,
+            curve: AppMotion.pop,
+            child: AnimatedContainer(
+              duration: AppDurations.medium,
+              curve: AppMotion.standard,
+              width: AppSizes.dayChipWidth,
+              decoration: BoxDecoration(
+                color: selected ? palette.hero : context.colors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                border: Border.all(
+                  color: selected ? palette.hero : context.colors.outline,
                 ),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  DateFormatter.dayOfMonth(day, locale),
-                  style: context.textTheme.titleLarge?.copyWith(
-                    color: foreground,
-                  ),
+                boxShadow: selected
+                    ? [
+                        BoxShadow(
+                          color: palette.cardShadow,
+                          blurRadius: AppElevation.cardBlur,
+                          offset: const Offset(0, AppElevation.cardOffsetY),
+                        ),
+                      ]
+                    : null,
+              ),
+              // Shrinks the labels rather than overflow with very large text.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      isToday
+                          ? LocaleKeys.booking_today.tr()
+                          : DateFormatter.weekdayShort(day, locale),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: muted,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      DateFormatter.dayOfMonth(day, locale),
+                      style: context.textTheme.headlineSmall?.copyWith(
+                        color: foreground,
+                      ),
+                    ),
+                    Text(
+                      DateFormatter.monthShort(day, locale),
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: muted,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  DateFormatter.monthShort(day, locale),
-                  style: context.textTheme.labelSmall?.copyWith(color: muted),
-                ),
-              ],
+              ),
             ),
           ),
         ),

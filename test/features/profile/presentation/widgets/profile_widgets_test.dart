@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/utils/form_status.dart';
@@ -59,7 +60,10 @@ void main() {
       MaterialApp(
         home: BlocProvider<AuthBloc>.value(
           value: authBloc,
-          child: const ProfilePage(),
+          child: BlocProvider(
+            create: (_) => ThemeModeCubit(),
+            child: const ProfilePage(),
+          ),
         ),
       ),
     );

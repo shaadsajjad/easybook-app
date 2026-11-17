@@ -5,10 +5,12 @@ import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/empty_view.dart';
 import 'package:easybook_app/core/widgets/error_view.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/inline_banner.dart';
 import 'package:easybook_app/core/widgets/loading_view.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
@@ -83,7 +85,7 @@ class BookingDetailView extends StatelessWidget {
             }
             if (state.failure is NotFoundFailure) {
               return EmptyView(
-                icon: Icons.search_off_rounded,
+                icon: AppIcons.noResults,
                 title: LocaleKeys.appointments_not_found_title.tr(),
                 message: LocaleKeys.appointments_not_found_message.tr(),
                 actionLabel: LocaleKeys.appointments_back_to_bookings.tr(),
@@ -124,7 +126,7 @@ class _DetailContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppointmentTicket(appointment: appointment),
+            FadeSlideIn(child: AppointmentTicket(appointment: appointment)),
             const SizedBox(height: AppSpacing.xl),
             if (appointment.canCancel)
               OutlinedButton.icon(
@@ -132,8 +134,7 @@ class _DetailContent extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.colors.error,
                   side: BorderSide(
-                    color: context.colors.error,
-                    width: AppSizes.borderThick,
+                    color: context.colors.error.withValues(alpha: 0.5),
                   ),
                 ),
                 icon: isCancelling
@@ -144,7 +145,7 @@ class _DetailContent extends StatelessWidget {
                           color: context.colors.error,
                         ),
                       )
-                    : const Icon(Icons.event_busy_rounded),
+                    : const Icon(AppIcons.cancelBooking),
                 label: Text(LocaleKeys.appointments_cancel_button.tr()),
               )
             else if (status == AppointmentStatus.confirmed)
