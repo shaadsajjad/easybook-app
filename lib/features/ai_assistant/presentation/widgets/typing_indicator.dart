@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/pulse_rings.dart';
 import 'package:easybook_app/features/ai_assistant/presentation/widgets/assistant_avatar.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,13 @@ class _TypingIndicatorState extends State<TypingIndicator>
       liveRegion: true,
       child: Row(
         children: [
-          const AssistantAvatar(),
+          // The avatar pings while the assistant is thinking.
+          PulseRings(
+            color: context.palette.accent,
+            size: AppSizes.chatAvatar,
+            rings: 2,
+            child: const AssistantAvatar(),
+          ),
           const SizedBox(width: AppSpacing.sm),
           Container(
             padding: const EdgeInsets.symmetric(
@@ -63,7 +70,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
   Widget _dot(BuildContext context, int index) {
     // Each dot rises a little later than the one before it.
     final phase = (_controller.value - index * 0.15) * 2 * math.pi;
-    final lift = math.max(0, math.sin(phase)) * AppSpacing.xs;
+    final lift = math.max(0, math.sin(phase)) * AppSpacing.sm;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
       child: Transform.translate(
@@ -72,8 +79,8 @@ class _TypingIndicatorState extends State<TypingIndicator>
           width: AppSizes.typingDot,
           height: AppSizes.typingDot,
           decoration: BoxDecoration(
-            color: context.colors.primary.withValues(
-              alpha: 0.4 + lift / AppSpacing.xs * 0.6,
+            color: context.colors.onSurface.withValues(
+              alpha: 0.3 + lift / AppSpacing.sm * 0.7,
             ),
             shape: BoxShape.circle,
           ),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/features/ai_assistant/domain/entities/chat_message.dart';
@@ -7,7 +8,7 @@ import 'package:easybook_app/features/ai_assistant/domain/entities/suggested_ser
 import 'package:easybook_app/features/ai_assistant/presentation/widgets/assistant_avatar.dart';
 import 'package:flutter/material.dart';
 
-/// One message. The user's are on the right in the brand gradient; the
+/// One message. The user's are on the right in ink; the
 /// assistant's are on the left, with tappable service chips underneath.
 class ChatBubble extends StatelessWidget {
   const new({required this.message, required this.onServiceTap, super.key});
@@ -31,8 +32,7 @@ class ChatBubble extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         decoration: BoxDecoration(
-          gradient: isUser ? context.palette.brandGradient : null,
-          color: isUser ? null : context.colors.surface,
+          color: isUser ? context.palette.hero : context.colors.surface,
           border: isUser ? null : Border.all(color: context.colors.outline),
           borderRadius: BorderRadius.only(
             topLeft: radius,
@@ -44,7 +44,7 @@ class ChatBubble extends StatelessWidget {
         child: SelectableText(
           message.text,
           style: context.textTheme.bodyMedium?.copyWith(
-            color: isUser ? context.colors.onPrimary : null,
+            color: isUser ? context.palette.onHero : null,
           ),
         ),
       ),
@@ -102,15 +102,13 @@ class _ServiceChip extends StatelessWidget {
         child: ActionChip(
           onPressed: onTap,
           avatar: Icon(
-            Icons.spa_outlined,
+            AppIcons.openExternal,
             size: AppSizes.iconSm,
             color: context.colors.primary,
           ),
           label: Text(service.name),
-          side: BorderSide(
-            color: context.colors.primary.withValues(alpha: 0.4),
-          ),
-          backgroundColor: context.colors.primary.withValues(alpha: 0.08),
+          side: BorderSide(color: context.colors.outline),
+          backgroundColor: context.colors.surface,
           labelStyle: context.textTheme.labelLarge?.copyWith(
             color: context.colors.primary,
           ),

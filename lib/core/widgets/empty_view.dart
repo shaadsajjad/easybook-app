@@ -1,3 +1,4 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/feedback_message.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ class EmptyView extends StatelessWidget {
   const new({
     required this.title,
     this.message,
-    this.icon = Icons.inbox_outlined,
+    this.icon = AppIcons.empty,
     this.actionLabel,
     this.onAction,
     super.key,
@@ -23,7 +24,7 @@ class EmptyView extends StatelessWidget {
   Widget build(BuildContext context) {
     return FeedbackMessage(
       icon: icon,
-      iconColor: context.colors.primary,
+      iconColor: context.palette.accent,
       title: title,
       message: message,
       actionLabel: actionLabel,

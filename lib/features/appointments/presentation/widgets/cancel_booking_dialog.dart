@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
+import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/date_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/features/appointments/domain/entities/appointment.dart';
@@ -16,7 +18,7 @@ abstract final class CancelBookingDialog {
       context: context,
       builder: (dialogContext) => AlertDialog(
         icon: Icon(
-          Icons.event_busy_rounded,
+          AppIcons.cancelBooking,
           color: Theme.of(dialogContext).colorScheme.error,
         ),
         title: Text(LocaleKeys.appointments_cancel_confirm_title.tr()),
@@ -34,9 +36,10 @@ abstract final class CancelBookingDialog {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(LocaleKeys.appointments_keep_booking.tr()),
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(dialogContext).colorScheme.error,
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(dialogContext).colorScheme.error,
+              minimumSize: const Size(0, AppSizes.minTapTarget),
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(LocaleKeys.appointments_confirm_cancel.tr()),

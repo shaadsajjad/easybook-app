@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/feedback_message.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +15,12 @@ class ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FeedbackMessage(
-      icon: Icons.cloud_off_rounded,
+      icon: AppIcons.error,
       iconColor: context.colors.error,
       title: LocaleKeys.errors_title.tr(),
       message: message,
       actionLabel: LocaleKeys.common_retry.tr(),
-      actionIcon: Icons.refresh_rounded,
+      actionIcon: AppIcons.retry,
       onAction: onRetry,
     );
   }

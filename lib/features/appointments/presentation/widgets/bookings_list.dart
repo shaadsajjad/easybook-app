@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/empty_view.dart';
 import 'package:easybook_app/core/widgets/error_view.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/core/widgets/skeleton.dart';
 import 'package:easybook_app/features/appointments/domain/entities/bookings_tab.dart';
@@ -58,11 +60,12 @@ class _BookingsListState extends State<BookingsList>
               ? _EmptyTab(tab: tab)
               : ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(
+                  // The bottom inset clears the floating navigation bar.
+                  padding: EdgeInsets.fromLTRB(
                     AppSpacing.page,
                     AppSpacing.lg,
                     AppSpacing.page,
-                    AppSpacing.xxl,
+                    AppSpacing.xxl + MediaQuery.paddingOf(context).bottom,
                   ),
                   itemCount: isFirstLoad ? 3 : list.appointments.length,
                   separatorBuilder: (_, _) =>
@@ -75,12 +78,15 @@ class _BookingsListState extends State<BookingsList>
                     }
                     final appointment = list.appointments[index];
                     return ResponsiveCenter(
-                      child: BookingCard(
-                        appointment: appointment,
-                        highlightDate: tab == BookingsTab.upcoming,
-                        onTap: () => context.push(
-                          AppRoutes.bookingDetailPath(appointment.id),
-                          extra: appointment,
+                      child: FadeSlideIn(
+                        index: index,
+                        child: BookingCard(
+                          appointment: appointment,
+                          highlightDate: tab == BookingsTab.upcoming,
+                          onTap: () => context.push(
+                            AppRoutes.bookingDetailPath(appointment.id),
+                            extra: appointment,
+                          ),
                         ),
                       ),
                     );
@@ -107,9 +113,7 @@ class _EmptyTab extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: EmptyView(
-            icon: isUpcoming
-                ? Icons.event_available_rounded
-                : Icons.history_rounded,
+            icon: isUpcoming ? AppIcons.slotChosen : AppIcons.history,
             title: isUpcoming
                 ? LocaleKeys.appointments_empty_upcoming_title.tr()
                 : LocaleKeys.appointments_empty_past_title.tr(),

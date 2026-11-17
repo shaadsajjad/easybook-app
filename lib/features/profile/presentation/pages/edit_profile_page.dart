@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/form_status.dart';
@@ -105,7 +106,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   AppTextField(
                     label: LocaleKeys.profile_name_label.tr(),
                     controller: _name,
-                    prefixIcon: Icons.person_outline_rounded,
+                    prefixIcon: AppIcons.person,
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.name],
@@ -117,7 +118,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   AppTextField(
                     label: LocaleKeys.profile_email_label.tr(),
                     controller: _email,
-                    prefixIcon: Icons.lock_outline_rounded,
+                    prefixIcon: AppIcons.password,
                     readOnly: true,
                     enabled: false,
                     helperText: LocaleKeys.profile_email_locked.tr(),
@@ -127,7 +128,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                     label: LocaleKeys.profile_phone_label.tr(),
                     hint: LocaleKeys.profile_phone_hint.tr(),
                     controller: _phone,
-                    prefixIcon: Icons.phone_outlined,
+                    prefixIcon: AppIcons.phone,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.telephoneNumber],

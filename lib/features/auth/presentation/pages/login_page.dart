@@ -3,7 +3,9 @@ import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
+import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/form_status.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/login_cubit.dart';
@@ -44,35 +46,60 @@ class LoginView extends StatelessWidget {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
-          body: SingleChildScrollView(
+          backgroundColor: context.palette.hero,
+          body: CustomScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Column(
-              children: [
-                AuthHeader(
+            slivers: [
+              SliverToBoxAdapter(
+                child: AuthHeader(
                   title: LocaleKeys.auth_login_title.tr(),
                   subtitle: LocaleKeys.auth_login_subtitle.tr(),
                 ),
-                SafeArea(
-                  top: false,
-                  child: ResponsiveCenter(
-                    maxWidth: AppBreakpoints.maxFormWidth,
-                    padding: const EdgeInsets.all(AppSpacing.page),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: AppSpacing.sm),
-                        const LoginForm(),
-                        const SizedBox(height: AppSpacing.lg),
-                        AuthFooterLink(
-                          question: LocaleKeys.auth_no_account.tr(),
-                          action: LocaleKeys.auth_go_register.tr(),
-                          onPressed: () => context.go(AppRoutes.register),
+              ),
+              // The form sits on a sheet that slides up over the hero.
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: FadeSlideIn(
+                  index: 2,
+                  offset: AppMotion.entranceOffset * 3,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: context.theme.scaffoldBackgroundColor,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(AppRadius.xl + AppSpacing.xs),
+                      ),
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      child: ResponsiveCenter(
+                        maxWidth: AppBreakpoints.maxFormWidth,
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.page,
+                          AppSpacing.xl,
+                          AppSpacing.page,
+                          AppSpacing.xl,
                         ),
-                      ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const FadeSlideIn(index: 4, child: LoginForm()),
+                            const SizedBox(height: AppSpacing.md),
+                            FadeSlideIn(
+                              index: 5,
+                              child: AuthFooterLink(
+                                question: LocaleKeys.auth_no_account.tr(),
+                                action: LocaleKeys.auth_go_register.tr(),
+                                onPressed: () => context.go(AppRoutes.register),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

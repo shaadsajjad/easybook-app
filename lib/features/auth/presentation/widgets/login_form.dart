@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/constants/app_constants.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/validators.dart';
@@ -80,7 +81,7 @@ class _LoginFormState extends State<LoginForm> {
                   label: LocaleKeys.auth_email_label.tr(),
                   hint: LocaleKeys.auth_email_hint.tr(),
                   controller: _email,
-                  prefixIcon: Icons.mail_outline_rounded,
+                  prefixIcon: AppIcons.email,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.email],
@@ -93,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                   label: LocaleKeys.auth_password_label.tr(),
                   hint: LocaleKeys.auth_password_hint.tr(),
                   controller: _password,
-                  prefixIcon: Icons.lock_outline_rounded,
+                  prefixIcon: AppIcons.password,
                   isPassword: true,
                   textInputAction: TextInputAction.done,
                   autofillHints: const [AutofillHints.password],
@@ -112,11 +113,11 @@ class _LoginFormState extends State<LoginForm> {
                   isLoading: state.status.isSubmitting,
                   onPressed: _submit,
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: LocaleKeys.auth_demo_button.tr(),
-                  icon: Icons.bolt_rounded,
-                  variant: AppButtonVariant.text,
+                  icon: AppIcons.demo,
+                  variant: AppButtonVariant.secondary,
                   onPressed: state.status.isSubmitting ? null : _useDemoAccount,
                 ),
               ],

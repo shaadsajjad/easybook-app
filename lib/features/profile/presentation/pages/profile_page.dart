@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:easybook_app/app/theme_mode_cubit.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/auth/domain/entities/user.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -11,6 +14,7 @@ import 'package:easybook_app/features/profile/presentation/widgets/language_shee
 import 'package:easybook_app/features/profile/presentation/widgets/profile_header.dart';
 import 'package:easybook_app/features/profile/presentation/widgets/profile_menu_tile.dart';
 import 'package:easybook_app/features/profile/presentation/widgets/profile_section.dart';
+import 'package:easybook_app/features/profile/presentation/widgets/theme_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,11 +34,12 @@ class ProfilePage extends StatelessWidget {
         body: SafeArea(
           bottom: false,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(
+            // The bottom inset clears the floating navigation bar.
+            padding: EdgeInsets.fromLTRB(
               AppSpacing.page,
               AppSpacing.lg,
               AppSpacing.page,
-              AppSpacing.xxl,
+              AppSpacing.xxl + MediaQuery.paddingOf(context).bottom,
             ),
             children: [
               ResponsiveCenter(
@@ -46,53 +51,73 @@ class ProfilePage extends StatelessWidget {
                       style: context.textTheme.headlineMedium,
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    if (user != null) ProfileHeader(user: user),
+                    if (user != null)
+                      FadeSlideIn(child: ProfileHeader(user: user)),
                     const SizedBox(height: AppSpacing.xl),
-                    ProfileSection(
-                      title: LocaleKeys.profile_account_section.tr(),
-                      tiles: [
-                        ProfileMenuTile(
-                          icon: Icons.person_outline_rounded,
-                          title: LocaleKeys.profile_edit_profile.tr(),
-                          subtitle: LocaleKeys.profile_edit_profile_subtitle
-                              .tr(),
-                          onTap: () => context.push(AppRoutes.editProfilePath),
-                        ),
-                        ProfileMenuTile(
-                          icon: Icons.lock_outline_rounded,
-                          title: LocaleKeys.profile_change_password.tr(),
-                          subtitle: LocaleKeys.profile_change_password_subtitle
-                              .tr(),
-                          onTap: () =>
-                              context.push(AppRoutes.changePasswordPath),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    ProfileSection(
-                      title: LocaleKeys.profile_preferences_section.tr(),
-                      tiles: [
-                        ProfileMenuTile(
-                          icon: Icons.translate_rounded,
-                          title: LocaleKeys.profile_language.tr(),
-                          subtitle: LanguageSheet.labelFor(
-                            Localizations.localeOf(context),
+                    FadeSlideIn(
+                      index: 1,
+                      child: ProfileSection(
+                        title: LocaleKeys.profile_account_section.tr(),
+                        tiles: [
+                          ProfileMenuTile(
+                            icon: AppIcons.editProfile,
+                            title: LocaleKeys.profile_edit_profile.tr(),
+                            subtitle: LocaleKeys.profile_edit_profile_subtitle
+                                .tr(),
+                            onTap: () =>
+                                context.push(AppRoutes.editProfilePath),
                           ),
-                          onTap: () => LanguageSheet.show(context),
-                        ),
-                      ],
+                          ProfileMenuTile(
+                            icon: AppIcons.password,
+                            title: LocaleKeys.profile_change_password.tr(),
+                            subtitle: LocaleKeys
+                                .profile_change_password_subtitle
+                                .tr(),
+                            onTap: () =>
+                                context.push(AppRoutes.changePasswordPath),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    ProfileSection(
-                      tiles: [
-                        ProfileMenuTile(
-                          icon: Icons.logout_rounded,
-                          title: LocaleKeys.auth_logout.tr(),
-                          subtitle: LocaleKeys.profile_logout_subtitle.tr(),
-                          destructive: true,
-                          onTap: () => confirmLogout(context),
-                        ),
-                      ],
+                    FadeSlideIn(
+                      index: 2,
+                      child: ProfileSection(
+                        title: LocaleKeys.profile_preferences_section.tr(),
+                        tiles: [
+                          ProfileMenuTile(
+                            icon: AppIcons.language,
+                            title: LocaleKeys.profile_language.tr(),
+                            subtitle: LanguageSheet.labelFor(
+                              Localizations.localeOf(context),
+                            ),
+                            onTap: () => LanguageSheet.show(context),
+                          ),
+                          ProfileMenuTile(
+                            icon: AppIcons.appearance,
+                            title: LocaleKeys.profile_appearance.tr(),
+                            subtitle: ThemeSheet.labelFor(
+                              context.watch<ThemeModeCubit>().state,
+                            ),
+                            onTap: () => ThemeSheet.show(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    FadeSlideIn(
+                      index: 3,
+                      child: ProfileSection(
+                        tiles: [
+                          ProfileMenuTile(
+                            icon: AppIcons.logout,
+                            title: LocaleKeys.auth_logout.tr(),
+                            subtitle: LocaleKeys.profile_logout_subtitle.tr(),
+                            destructive: true,
+                            onTap: () => confirmLogout(context),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

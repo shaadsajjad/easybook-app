@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/skeleton.dart';
@@ -10,12 +11,17 @@ class AppNetworkImage extends StatelessWidget {
   const new({
     required this.url,
     this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
     this.semanticLabel,
     super.key,
   });
 
   final String url;
   final BoxFit fit;
+
+  /// Which part of the image stays visible when it is cropped (moved by
+  /// the featured carousel for a parallax effect).
+  final Alignment alignment;
   final String? semanticLabel;
 
   @override
@@ -26,6 +32,7 @@ class AppNetworkImage extends StatelessWidget {
       child: CachedNetworkImage(
         imageUrl: url,
         fit: fit,
+        alignment: alignment,
         width: double.infinity,
         height: double.infinity,
         fadeInDuration: AppDurations.medium,
@@ -35,7 +42,7 @@ class AppNetworkImage extends StatelessWidget {
           color: context.palette.surfaceMuted,
           child: Center(
             child: Icon(
-              Icons.image_not_supported_outlined,
+              AppIcons.brokenImage,
               color: context.palette.textSecondary,
               size: AppSizes.iconLg,
             ),

@@ -3,34 +3,43 @@
 Run from the project root:  python3 tool/generate_icons.py
 Needs Pillow (pip install pillow). No Flutter package is involved.
 
-The logo matches lib/core/widgets/app_logo.dart: a gradient rounded square
-with a white calendar and a coral check mark, drawn on a 1024 x 1024 canvas.
-Each flavor gets its own background so test builds are easy to tell apart:
-production = indigo -> violet, staging = slate,
-development = teal -> green.
+The logo matches lib/core/widgets/app_logo.dart: an ink rounded square
+holding an electric-lime calendar page, with the header line, the gaps around
+the binder rings and the check mark cut out of it. Drawn on a 1024 x 1024
+canvas. Each flavor gets its own colors so test builds are easy to tell
+apart: production = ink + lime, staging = slate + white,
+development = amber + white.
 """
 
 import json
 import shutil
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
 SUPERSAMPLE = 4  # draw 4x larger, then downscale, for smooth edges
 CANVAS = 1024
-
-WHITE = (255, 255, 255, 255)
-CORAL = (255, 107, 90, 255)
+BRAND = "#0D0F14"  # ink
+LIME = "#C6F24E"
 
 FLAVORS = {
-    # flavor: (android source set, iOS icon name, gradient start, end)
-    "production": ("main", "AppIcon", "#4F46E5", "#7C3AED"),
-    "staging": ("staging", "AppIcon-stg", "#334155", "#0F172A"),
-    "development": ("development", "AppIcon-dev", "#0EA5A4", "#10B981"),
+    # flavor: (android source set, iOS icon name, background, glyph color)
+    "production": ("main", "AppIcon", BRAND, LIME),
+    "staging": ("staging", "AppIcon-stg", "#334155", "#FFFFFF"),
+    "development": ("development", "AppIcon-dev", "#B45309", "#FFFFFF"),
 }
 
 ANDROID_LEGACY = {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}
+
+# Glyph geometry, in 1024-canvas units (same numbers as app_logo.dart).
+PAGE = (240, 296, 784, 776)
+PAGE_RADIUS = 104
+HEADER_Y, HEADER_WIDTH = 432, 28
+RINGS_X, RING_TOP, RING_BOTTOM = (400, 624), 224, 352
+RING_WIDTH, RING_GAP_WIDTH = 64, 120
+CHECK = [(390, 610), (484, 700), (646, 536)]
+CHECK_WIDTH = 64
 
 
 def hex_rgb(value):
@@ -38,58 +47,147 @@ def hex_rgb(value):
     return tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
 
 
-def gradient(size, start, end):
-    """Diagonal gradient, top-left -> bottom-right."""
-    a, b = hex_rgb(start), hex_rgb(end)
-    small = Image.new("RGBA", (256, 256))
-    pixels = small.load()
-    for y in range(256):
-        for x in range(256):
-            t = (x + y) / 510
-            pixels[x, y] = tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3)) + (255,)
-    return small.resize((size, size), Image.BILINEAR)
+def _capsule(draw, x, top, bottom, width, fill, s):
+    """A vertical line with round caps."""
+    r = width / 2 * s
+    draw.rectangle([(x * s) - r, top * s, (x * s) + r, bottom * s], fill=fill)
+    for y in (top, bottom):
+        draw.ellipse([(x * s) - r, (y * s) - r, (x * s) + r, (y * s) + r], fill=fill)
 
 
-def draw_glyph(draw, scale):
-    """White calendar + coral check, in 1024-canvas coordinates * scale."""
+def glyph_mask(s):
+    """White pixels = the logo glyph. Cut-outs are real holes."""
+    size = CANVAS * s
+    page = Image.new("L", (size, size), 0)
+    d = ImageDraw.Draw(page)
+    d.rounded_rectangle([v * s for v in PAGE], radius=PAGE_RADIUS * s, fill=255)
 
-    def s(*values):
-        return [v * scale for v in values]
-
-    draw.rounded_rectangle(s(232, 268, 792, 768), radius=84 * scale, outline=WHITE, width=round(56 * scale))
-    draw.line(s(232, 410, 792, 410), fill=WHITE, width=round(48 * scale))
-    for x in (384, 640):
-        draw.line(s(x, 200, x, 320), fill=WHITE, width=round(60 * scale))
-        r = 30 * scale
-        for y in (200, 320):  # round caps
-            draw.ellipse([x * scale - r, y * scale - r, x * scale + r, y * scale + r], fill=WHITE)
-    points = [(376 * scale, 590 * scale), (480 * scale, 690 * scale), (662 * scale, 500 * scale)]
-    draw.line(points, fill=CORAL, width=round(72 * scale), joint="curve")
-    r = 36 * scale
+    cuts = Image.new("L", (size, size), 0)
+    c = ImageDraw.Draw(cuts)
+    c.rectangle(
+        [PAGE[0] * s, (HEADER_Y - HEADER_WIDTH / 2) * s, PAGE[2] * s, (HEADER_Y + HEADER_WIDTH / 2) * s],
+        fill=255,
+    )
+    for x in RINGS_X:
+        _capsule(c, x, RING_TOP, RING_BOTTOM, RING_GAP_WIDTH, 255, s)
+    points = [(x * s, y * s) for x, y in CHECK]
+    c.line(points, fill=255, width=round(CHECK_WIDTH * s), joint="curve")
+    r = CHECK_WIDTH / 2 * s
     for px, py in (points[0], points[-1]):
-        draw.ellipse([px - r, py - r, px + r, py + r], fill=CORAL)
+        c.ellipse([px - r, py - r, px + r, py + r], fill=255)
+
+    glyph = ImageChops.subtract(page, cuts)
+    g = ImageDraw.Draw(glyph)
+    for x in RINGS_X:
+        _capsule(g, x, RING_TOP, RING_BOTTOM, RING_WIDTH, 255, s)
+    return glyph
 
 
-def full_icon(start, end, shape):
+def full_icon(color, shape, glyph="#FFFFFF"):
     """1024 px icon. shape: 'square' (iOS, full bleed), 'rounded', 'circle'."""
     size = CANVAS * SUPERSAMPLE
-    image = gradient(size, start, end)
-    draw_glyph(ImageDraw.Draw(image), SUPERSAMPLE)
+    image = Image.new("RGBA", (size, size), hex_rgb(color) + (255,))
+    image.paste(hex_rgb(glyph) + (255,), (0, 0), glyph_mask(SUPERSAMPLE))
     if shape != "square":
         mask = Image.new("L", (size, size), 0)
         mask_draw = ImageDraw.Draw(mask)
         if shape == "circle":
             mask_draw.ellipse([0, 0, size, size], fill=255)
         else:
-            mask_draw.rounded_rectangle([0, 0, size, size], radius=230 * SUPERSAMPLE, fill=255)
+            mask_draw.rounded_rectangle([0, 0, size, size], radius=228 * SUPERSAMPLE, fill=255)
         image.putalpha(mask)
     return image.resize((CANVAS, CANVAS), Image.LANCZOS)
 
 
-def write_android(flavor, source_set, start, end):
+def _page_path():
+    l, t, r, b = PAGE
+    k = PAGE_RADIUS
+    return (
+        f"M{l + k},{t} H{r - k} A{k},{k} 0 0 1 {r},{t + k} V{b - k} A{k},{k} 0 0 1 {r - k},{b} "
+        f"H{l + k} A{k},{k} 0 0 1 {l},{b - k} V{t + k} A{k},{k} 0 0 1 {l + k},{t} Z"
+    )
+
+
+def _rings_path():
+    return " ".join(f"M{x},{RING_TOP} V{RING_BOTTOM}" for x in RINGS_X)
+
+
+def _check_path():
+    return "M{},{} L{},{} L{},{}".format(*[v for p in CHECK for v in p])
+
+
+def glyph_vector(width_dp, viewport, offset, cut_color, glyph="#FFFFFF"):
+    """Android vector drawable of the glyph: the page with cut-outs
+    painted in the background color."""
+    l, _, r, _ = PAGE
+    return f"""<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated by tool/generate_icons.py: the EasyBook calendar and check. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="{width_dp}dp"
+    android:height="{width_dp}dp"
+    android:viewportWidth="{viewport}"
+    android:viewportHeight="{viewport}">
+    <group android:translateX="{offset}" android:translateY="{offset}">
+        <path android:pathData="{_page_path()}" android:fillColor="{glyph}" />
+        <clip-path android:pathData="{_page_path()}" />
+        <path
+            android:pathData="M{l},{HEADER_Y} H{r}"
+            android:strokeColor="{cut_color}"
+            android:strokeWidth="{HEADER_WIDTH}" />
+        <path
+            android:pathData="{_rings_path()}"
+            android:strokeColor="{cut_color}"
+            android:strokeLineCap="round"
+            android:strokeWidth="{RING_GAP_WIDTH}" />
+    </group>
+    <group android:translateX="{offset}" android:translateY="{offset}">
+        <path
+            android:pathData="{_rings_path()}"
+            android:strokeColor="{glyph}"
+            android:strokeLineCap="round"
+            android:strokeWidth="{RING_WIDTH}" />
+        <path
+            android:pathData="{_check_path()}"
+            android:strokeColor="{cut_color}"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:strokeWidth="{CHECK_WIDTH}" />
+    </group>
+</vector>
+"""
+
+
+def monochrome_vector(viewport, offset):
+    """Themed icon (Android 13+): the system tints it, so it is drawn as a
+    single-color outline (page, rings and check) instead of cut-outs."""
+    l, _, r, _ = PAGE
+    return f"""<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated by tool/generate_icons.py: themed (monochrome) icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="{viewport}"
+    android:viewportHeight="{viewport}">
+    <group android:translateX="{offset}" android:translateY="{offset}">
+        <path android:pathData="{_page_path()} M{l},{HEADER_Y} H{r}" android:strokeColor="#FFFFFF" android:strokeWidth="52" />
+        <path android:pathData="{_rings_path()}" android:strokeColor="#FFFFFF" android:strokeLineCap="round" android:strokeWidth="60" />
+        <path android:pathData="{_check_path()}" android:strokeColor="#FFFFFF" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="64" />
+    </group>
+</vector>
+"""
+
+
+def adaptive_viewport():
+    # The 1024 design fills 84 of the 108 dp canvas, so the glyph sits
+    # inside the 66 dp safe zone.
+    viewport = round(CANVAS * 108 / 84)
+    return viewport, round((viewport - CANVAS) / 2)
+
+
+def write_android(flavor, source_set, color, glyph):
     res = ROOT / "android/app/src" / source_set / "res"
-    rounded = full_icon(start, end, "rounded")
-    circle = full_icon(start, end, "circle")
+    rounded = full_icon(color, "rounded", glyph)
+    circle = full_icon(color, "circle", glyph)
     for density, px in ANDROID_LEGACY.items():
         folder = res / f"mipmap-{density}"
         folder.mkdir(parents=True, exist_ok=True)
@@ -99,20 +197,24 @@ def write_android(flavor, source_set, start, end):
             (folder / old).unlink(missing_ok=True)
 
     # Play Store icon (512 px, full square; the store applies its own mask).
-    full_icon(start, end, "square").resize((512, 512), Image.LANCZOS).save(
+    full_icon(color, "square", glyph).resize((512, 512), Image.LANCZOS).save(
         ROOT / "android/app/src" / source_set / "ic_launcher-playstore.png"
     )
 
-    # Adaptive icon (Android 8+): vector foreground + gradient background.
-    (res / "drawable").mkdir(parents=True, exist_ok=True)
-    (res / "drawable/ic_launcher_background.xml").write_text(
+    # Adaptive icon (Android 8+): solid background + vector foreground. The
+    # foreground's cut-outs use the background color, so each flavor has its own.
+    drawable = res / "drawable"
+    drawable.mkdir(parents=True, exist_ok=True)
+    (drawable / "ic_launcher_background.xml").write_text(
         f"""<?xml version="1.0" encoding="utf-8"?>
 <!-- Generated by tool/generate_icons.py ({flavor}). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient android:angle="315" android:startColor="{start}" android:endColor="{end}" />
+    <solid android:color="{color}" />
 </shape>
 """
     )
+    viewport, offset = adaptive_viewport()
+    (drawable / "ic_launcher_foreground.xml").write_text(glyph_vector(108, viewport, offset, color, glyph))
     (res / "values/ic_launcher_background.xml").unlink(missing_ok=True)
 
     anydpi = res / "mipmap-anydpi-v26"
@@ -122,55 +224,20 @@ def write_android(flavor, source_set, start, end):
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
     <foreground android:drawable="@drawable/ic_launcher_foreground" />
-    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
 </adaptive-icon>
 """
     (anydpi / "ic_launcher.xml").write_text(adaptive)
     (anydpi / "ic_launcher_round.xml").write_text(adaptive)
 
 
-def glyph_vector(width_dp, viewport, offset, check_color="#FF6B5A"):
-    """Android vector drawable of the calendar + check."""
-    return f"""<?xml version="1.0" encoding="utf-8"?>
-<!-- Generated by tool/generate_icons.py: the EasyBook calendar and check. -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="{width_dp}dp"
-    android:height="{width_dp}dp"
-    android:viewportWidth="{viewport}"
-    android:viewportHeight="{viewport}">
-    <group android:translateX="{offset}" android:translateY="{offset}">
-        <path
-            android:pathData="M316,268 H708 A84,84 0 0 1 792,352 V684 A84,84 0 0 1 708,768 H316 A84,84 0 0 1 232,684 V352 A84,84 0 0 1 316,268 Z M232,410 H792"
-            android:strokeColor="#FFFFFF"
-            android:strokeWidth="52" />
-        <path
-            android:pathData="M384,200 V320 M640,200 V320"
-            android:strokeColor="#FFFFFF"
-            android:strokeLineCap="round"
-            android:strokeWidth="60" />
-        <path
-            android:pathData="M376,590 L480,690 L662,500"
-            android:strokeColor="{check_color}"
-            android:strokeLineCap="round"
-            android:strokeLineJoin="round"
-            android:strokeWidth="72" />
-    </group>
-</vector>
-"""
-
-
 def write_android_shared():
     res = ROOT / "android/app/src/main/res"
-    # Adaptive foreground: the 1024 design fills 84 of the 108 dp canvas,
-    # so the glyph sits inside the 66 dp safe zone.
-    viewport = round(CANVAS * 108 / 84)
-    offset = round((viewport - CANVAS) / 2)
-    (res / "drawable/ic_launcher_foreground.xml").write_text(glyph_vector(108, viewport, offset))
-    for source_set in ("development", "staging"):
-        (ROOT / f"android/app/src/{source_set}/res/drawable/ic_launcher_foreground.xml").unlink(missing_ok=True)
+    viewport, offset = adaptive_viewport()
+    (res / "drawable/ic_launcher_monochrome.xml").write_text(monochrome_vector(viewport, offset))
 
-    # Launch screen: brand color with the glyph in the middle.
-    (res / "drawable/ic_launch_image.xml").write_text(glyph_vector(140, CANVAS, 0))
+    # Launch screen: ink with the lime glyph in the middle.
+    (res / "drawable/ic_launch_image.xml").write_text(glyph_vector(140, CANVAS, 0, BRAND, LIME))
     launch = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Generated by tool/generate_icons.py: shown while Flutter starts. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
@@ -181,22 +248,22 @@ def write_android_shared():
     (res / "drawable/launch_background.xml").write_text(launch)
     (res / "drawable-v21/launch_background.xml").write_text(launch)
     (res / "values/colors.xml").write_text(
-        """<?xml version="1.0" encoding="utf-8"?>
+        f"""<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launch_background">#4F46E5</color>
+    <color name="launch_background">{BRAND}</color>
 </resources>
 """
     )
 
 
-def write_ios(icon_name, start, end):
+def write_ios(icon_name, color, glyph):
     bundle = ROOT / "ios/Runner/AppIcons" / f"{icon_name}.icon"
     assets = bundle / "Assets"
     if assets.exists():
         shutil.rmtree(assets)
     assets.mkdir(parents=True)
     # iOS applies its own rounded mask, so the image is a full square.
-    full_icon(start, end, "square").convert("RGB").save(assets / "Icon.png")
+    full_icon(color, "square", glyph).convert("RGB").save(assets / "Icon.png")
     manifest = {
         "groups": [
             {
@@ -217,19 +284,24 @@ def write_ios(icon_name, start, end):
 
 
 def write_ios_launch():
-    """Launch screen: the glyph (no background) on the brand color, like Android."""
+    """Launch screen: the lime glyph on ink, like Android."""
     folder = ROOT / "ios/Runner/Assets.xcassets/LaunchImage.imageset"
     size = CANVAS * SUPERSAMPLE
     glyph = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    draw_glyph(ImageDraw.Draw(glyph), SUPERSAMPLE)
+    glyph.paste(hex_rgb(LIME) + (255,), (0, 0), glyph_mask(SUPERSAMPLE))
     for scale in (1, 2, 3):
         px = 140 * scale
         glyph.resize((px, px), Image.LANCZOS).save(folder / f"LaunchImage@{scale}x.png")
+
     storyboard = ROOT / "ios/Runner/Base.lproj/LaunchScreen.storyboard"
     text = storyboard.read_text()
-    text = text.replace(
-        '<color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>',
-        '<color key="backgroundColor" red="0.30980392156862746" green="0.27450980392156865" blue="0.89803921568627454" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>',
+    start = text.index('<color key="backgroundColor"')
+    end = text.index("/>", start) + 2
+    red, green, blue = (c / 255 for c in hex_rgb(BRAND))
+    text = (
+        text[:start]
+        + f'<color key="backgroundColor" red="{red}" green="{green}" blue="{blue}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>'
+        + text[end:]
     )
     storyboard.write_text(text)
 
@@ -237,9 +309,9 @@ def write_ios_launch():
 def main():
     write_android_shared()
     write_ios_launch()
-    for flavor, (source_set, icon_name, start, end) in FLAVORS.items():
-        write_android(flavor, source_set, start, end)
-        write_ios(icon_name, start, end)
+    for flavor, (source_set, icon_name, color, glyph) in FLAVORS.items():
+        write_android(flavor, source_set, color, glyph)
+        write_ios(icon_name, color, glyph)
         print(f"{flavor}: done")
 
 

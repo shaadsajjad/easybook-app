@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/validators.dart';
@@ -67,7 +68,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   label: LocaleKeys.auth_name_label.tr(),
                   hint: LocaleKeys.auth_name_hint.tr(),
                   controller: _name,
-                  prefixIcon: Icons.person_outline_rounded,
+                  prefixIcon: AppIcons.person,
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.name],
@@ -80,7 +81,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   label: LocaleKeys.auth_email_label.tr(),
                   hint: LocaleKeys.auth_email_hint.tr(),
                   controller: _email,
-                  prefixIcon: Icons.mail_outline_rounded,
+                  prefixIcon: AppIcons.email,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.email],
@@ -93,7 +94,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   label: LocaleKeys.auth_password_label.tr(),
                   hint: LocaleKeys.auth_new_password_hint.tr(),
                   controller: _password,
-                  prefixIcon: Icons.lock_outline_rounded,
+                  prefixIcon: AppIcons.password,
                   isPassword: true,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.newPassword],
@@ -111,7 +112,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   label: LocaleKeys.auth_confirm_password_label.tr(),
                   hint: LocaleKeys.auth_confirm_password_hint.tr(),
                   controller: _confirm,
-                  prefixIcon: Icons.lock_outline_rounded,
+                  prefixIcon: AppIcons.password,
                   isPassword: true,
                   textInputAction: TextInputAction.done,
                   validator: (value) => Validators.confirmPassword(

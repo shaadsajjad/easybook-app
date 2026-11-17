@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
+import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +12,7 @@ Future<void> confirmLogout(BuildContext context) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      icon: const Icon(Icons.logout_rounded),
+      icon: const Icon(AppIcons.logout),
       title: Text(LocaleKeys.auth_logout_confirm_title.tr()),
       content: Text(LocaleKeys.auth_logout_confirm_message.tr()),
       actions: [
@@ -18,9 +20,10 @@ Future<void> confirmLogout(BuildContext context) async {
           onPressed: () => Navigator.of(dialogContext).pop(false),
           child: Text(LocaleKeys.common_cancel.tr()),
         ),
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(dialogContext).colorScheme.error,
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(dialogContext).colorScheme.error,
+            minimumSize: const Size(0, AppSizes.minTapTarget),
           ),
           onPressed: () => Navigator.of(dialogContext).pop(true),
           child: Text(LocaleKeys.auth_logout.tr()),

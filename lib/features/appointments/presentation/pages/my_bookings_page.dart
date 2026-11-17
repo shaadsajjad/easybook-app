@@ -89,7 +89,7 @@ class MyBookingsView extends StatelessWidget {
   }
 }
 
-/// Pill-shaped tab switcher (the gradient indicator comes from the theme).
+/// Segmented tab switcher: the raised indicator comes from the theme.
 class _SegmentedTabs extends StatelessWidget {
   const new();
 

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/form_status.dart';
@@ -98,7 +99,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                       label: LocaleKeys.profile_current_password_label.tr(),
                       hint: LocaleKeys.profile_current_password_hint.tr(),
                       controller: _current,
-                      prefixIcon: Icons.lock_outline_rounded,
+                      prefixIcon: AppIcons.password,
                       isPassword: true,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.password],
@@ -113,7 +114,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                       label: LocaleKeys.profile_new_password_label.tr(),
                       hint: LocaleKeys.profile_new_password_hint.tr(),
                       controller: _new,
-                      prefixIcon: Icons.key_rounded,
+                      prefixIcon: AppIcons.newPassword,
                       isPassword: true,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.newPassword],
@@ -132,7 +133,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                       label: LocaleKeys.profile_confirm_password_label.tr(),
                       hint: LocaleKeys.profile_confirm_password_hint.tr(),
                       controller: _confirm,
-                      prefixIcon: Icons.key_rounded,
+                      prefixIcon: AppIcons.newPassword,
                       isPassword: true,
                       textInputAction: TextInputAction.done,
                       validator: (value) => Validators.confirmPassword(

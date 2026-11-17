@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/aurora_background.dart';
+import 'package:easybook_app/core/widgets/pulse_rings.dart';
 import 'package:easybook_app/features/ai_assistant/presentation/widgets/assistant_avatar.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +13,13 @@ class ChatHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(bottom: BorderSide(color: context.colors.outline)),
+    final palette = context.palette;
+    // An aurora hero bar with a "live" lime dot next to the title.
+    return AuroraBackground(
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(AppRadius.xl),
       ),
+      intensity: 0.7,
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -31,15 +35,41 @@ class ChatHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      LocaleKeys.assistant_title.tr(),
-                      style: context.textTheme.titleMedium,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            LocaleKeys.assistant_title.tr(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.titleMedium?.copyWith(
+                              color: palette.onHero,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        PulseRings(
+                          color: palette.accent,
+                          size: AppSpacing.sm,
+                          rings: 2,
+                          child: Container(
+                            width: AppSpacing.sm,
+                            height: AppSpacing.sm,
+                            decoration: BoxDecoration(
+                              color: palette.accent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Text(
                       LocaleKeys.assistant_subtitle.tr(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: palette.onHeroMuted,
+                      ),
                     ),
                   ],
                 ),

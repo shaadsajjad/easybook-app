@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/empty_view.dart';
 import 'package:easybook_app/core/widgets/error_view.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/skeleton.dart';
 import 'package:easybook_app/features/services/domain/entities/service.dart';
 import 'package:easybook_app/features/services/presentation/bloc/services_bloc.dart';
@@ -44,7 +46,7 @@ class ServicesListSliver extends StatelessWidget {
           return SliverFillRemaining(
             hasScrollBody: false,
             child: EmptyView(
-              icon: Icons.search_off_rounded,
+              icon: AppIcons.noResults,
               title: LocaleKeys.services_empty_title.tr(),
               message: LocaleKeys.services_empty_message.tr(),
               actionLabel: state.filter.isActive
@@ -84,9 +86,14 @@ class ServicesListSliver extends StatelessWidget {
                   return _ListFooter(state: state);
                 }
                 final service = state.services[index];
-                return ServiceCard(
-                  service: service,
-                  onTap: () => onServiceTap(service),
+                return FadeSlideIn(
+                  // A new key per search/filter result, so results animate in.
+                  key: ValueKey(service.id),
+                  index: index,
+                  child: ServiceCard(
+                    service: service,
+                    onTap: () => onServiceTap(service),
+                  ),
                 );
               },
             ),
@@ -125,7 +132,7 @@ class _ListFooter extends StatelessWidget {
             onPressed: () => context.read<ServicesBloc>().add(
               const ServicesNextPageRequested(),
             ),
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(AppIcons.retry),
             label: Text(LocaleKeys.common_retry.tr()),
           ),
         ],

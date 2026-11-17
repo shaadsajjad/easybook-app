@@ -4,9 +4,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/app_logo.dart';
+import 'package:easybook_app/core/widgets/aurora_background.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
+import 'package:easybook_app/core/widgets/pulse_rings.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:easybook_app/features/auth/presentation/bloc/splash_cubit.dart';
 import 'package:flutter/material.dart';
@@ -36,42 +40,53 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
+    final onGradient = context.palette.onHero;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        body: DecoratedBox(
-          decoration: BoxDecoration(gradient: context.palette.brandGradient),
+        // Ink, like the native launch screen, with the aurora drifting in.
+        body: AuroraBackground(
           child: SafeArea(
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Column(
                   children: [
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0.85, end: 1),
-                      duration: AppDurations.slow,
-                      curve: Curves.easeOutBack,
-                      builder: (context, scale, child) =>
-                          Transform.scale(scale: scale, child: child),
-                      child: const AppLogo(
-                        size: AppSizes.splashLogo,
-                        showBackground: false,
+                    // The logo builds itself (page, rings, check) inside
+                    // radar-like pulse rings.
+                    PulseRings(
+                      color: context.palette.accent,
+                      size: AppSizes.splashLogo,
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: 1),
+                        duration: MediaQuery.disableAnimationsOf(context)
+                            ? Duration.zero
+                            : AppDurations.logo,
+                        builder: (context, t, _) => AppLogo(
+                          size: AppSizes.splashLogo,
+                          showBackground: false,
+                          progress: t,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      LocaleKeys.app_name.tr(),
-                      style: context.textTheme.headlineLarge?.copyWith(
-                        color: onGradient,
+                    FadeSlideIn(
+                      index: 6,
+                      child: Text(
+                        LocaleKeys.app_name.tr(),
+                        style: context.textTheme.displaySmall?.copyWith(
+                          color: onGradient,
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      LocaleKeys.app_tagline.tr(),
-                      textAlign: TextAlign.center,
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: onGradient.withValues(alpha: 0.85),
+                    FadeSlideIn(
+                      index: 7,
+                      child: Text(
+                        LocaleKeys.app_tagline.tr(),
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: onGradient.withValues(alpha: 0.8),
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xxxl),
@@ -100,14 +115,14 @@ class _SplashProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
+    final onGradient = context.palette.onHero;
     return Column(
       children: [
         SizedBox.square(
           dimension: AppSizes.iconLg,
           child: CircularProgressIndicator(
             strokeWidth: AppSizes.progressStroke,
-            color: onGradient,
+            color: context.palette.accent,
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
@@ -148,7 +163,7 @@ class _SplashError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
+    final onGradient = context.palette.onHero;
     return Column(
       children: [
         Text(
@@ -168,12 +183,12 @@ class _SplashError extends StatelessWidget {
           onPressed: () =>
               context.read<AuthBloc>().add(const AuthSessionRequested()),
           style: FilledButton.styleFrom(
-            backgroundColor: onGradient,
-            foregroundColor: context.palette.solidFill,
+            backgroundColor: context.palette.solidFill,
+            foregroundColor: context.palette.onSolidFill,
             minimumSize: const Size(0, AppSizes.buttonHeight),
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           ),
-          icon: const Icon(Icons.refresh_rounded),
+          icon: const Icon(AppIcons.retry),
           label: Text(LocaleKeys.common_retry.tr()),
         ),
       ],

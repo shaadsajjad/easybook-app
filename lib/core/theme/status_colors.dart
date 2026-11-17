@@ -12,13 +12,12 @@ abstract final class StatusColors {
     final isDark = brightness == Brightness.dark;
     return switch (tone) {
       StatusTone.warning => isDark ? AppColors.amberLight : AppColors.amber,
-      StatusTone.info =>
-        isDark ? AppColors.brandIndigoLight : AppColors.brandIndigo,
+      StatusTone.info => isDark ? AppColors.blueLight : AppColors.blue,
       StatusTone.success => isDark ? AppColors.greenLight : AppColors.green,
       StatusTone.neutral => isDark ? AppColors.slateLight : AppColors.slate,
     };
   }
 
   static Color background(StatusTone tone, Brightness brightness) =>
-      foreground(tone, brightness).withValues(alpha: 0.14);
+      foreground(tone, brightness).withValues(alpha: 0.12);
 }

@@ -1,10 +1,15 @@
 import 'package:easybook_app/core/theme/app_colors.dart';
+import 'package:easybook_app/core/theme/app_page_transitions.dart';
 import 'package:easybook_app/core/theme/app_palette.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/theme/app_text_styles.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// Light and dark Material 3 themes with every component styled centrally.
+///
+/// The look is bold: ink hero areas, electric lime calls to action with
+/// ink text, pill-shaped buttons and big rounded cards.
 abstract final class AppTheme {
   static ThemeData get light => _build(
     brightness: Brightness.light,
@@ -14,9 +19,8 @@ abstract final class AppTheme {
     outline: AppColors.lightOutline,
     textPrimary: AppColors.lightTextPrimary,
     textSecondary: AppColors.lightTextSecondary,
-    primary: AppColors.brandIndigo,
-    secondary: AppColors.brandViolet,
-    tertiary: AppColors.accentCoral,
+    primary: AppColors.limeDeep,
+    onPrimary: AppColors.white,
     error: AppColors.error,
     palette: AppPalette.light,
   );
@@ -29,9 +33,8 @@ abstract final class AppTheme {
     outline: AppColors.darkOutline,
     textPrimary: AppColors.darkTextPrimary,
     textSecondary: AppColors.darkTextSecondary,
-    primary: AppColors.brandIndigoLight,
-    secondary: AppColors.brandVioletLight,
-    tertiary: AppColors.accentCoralLight,
+    primary: AppColors.lime,
+    onPrimary: AppColors.ink,
     error: AppColors.errorLight,
     palette: AppPalette.dark,
   );
@@ -45,20 +48,21 @@ abstract final class AppTheme {
     required Color textPrimary,
     required Color textSecondary,
     required Color primary,
-    required Color secondary,
-    required Color tertiary,
+    required Color onPrimary,
     required Color error,
     required AppPalette palette,
   }) {
     final colorScheme =
         ColorScheme.fromSeed(
-          seedColor: AppColors.brandIndigo,
+          seedColor: AppColors.lime,
           brightness: brightness,
         ).copyWith(
           primary: primary,
-          onPrimary: AppColors.white,
-          secondary: secondary,
-          tertiary: tertiary,
+          onPrimary: onPrimary,
+          primaryContainer: palette.brandSoft,
+          onPrimaryContainer: primary,
+          secondary: primary,
+          tertiary: palette.accent,
           error: error,
           surface: surface,
           onSurface: textPrimary,
@@ -75,21 +79,30 @@ abstract final class AppTheme {
       secondary: textSecondary,
     );
 
-    final buttonShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppRadius.md),
-    );
+    const buttonShape = StadiumBorder();
     const buttonSize = Size.fromHeight(AppSizes.buttonHeight);
-    final inputBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppRadius.md),
-      borderSide: BorderSide.none,
-    );
+    OutlineInputBorder inputBorder(Color color, [double width = 1]) =>
+        OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          borderSide: BorderSide(color: color, width: width),
+        );
 
     return base.copyWith(
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
       textTheme: textTheme,
       extensions: [palette],
-      splashFactory: InkSparkle.splashFactory,
+      splashFactory: InkRipple.splashFactory,
+      // Smooth, platform-appropriate page transitions.
+      // Zoom + fade + rise (see app_page_transitions). iOS keeps the
+      // native slide so swipe-back still works.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: AppPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: AppPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarThemeData(
         backgroundColor: background,
         foregroundColor: textPrimary,
@@ -104,6 +117,11 @@ abstract final class AppTheme {
           minimumSize: buttonSize,
           shape: buttonShape,
           textStyle: textTheme.labelLarge,
+          backgroundColor: palette.solidFill,
+          foregroundColor: palette.onSolidFill,
+          disabledBackgroundColor: surfaceMuted,
+          disabledForegroundColor: textSecondary,
+          elevation: 0,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -119,8 +137,9 @@ abstract final class AppTheme {
           minimumSize: buttonSize,
           shape: buttonShape,
           textStyle: textTheme.labelLarge,
-          foregroundColor: primary,
-          side: BorderSide(color: outline, width: AppSizes.borderThick),
+          foregroundColor: textPrimary,
+          backgroundColor: surface,
+          side: BorderSide(color: outline),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -128,6 +147,12 @@ abstract final class AppTheme {
           foregroundColor: primary,
           minimumSize: const Size(AppSizes.minTapTarget, AppSizes.minTapTarget),
           textStyle: textTheme.labelLarge,
+          shape: buttonShape,
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size.square(AppSizes.minTapTarget),
         ),
       ),
       inputDecorationTheme: InputDecorationThemeData(
@@ -135,17 +160,14 @@ abstract final class AppTheme {
         fillColor: surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
-          vertical: AppSpacing.lg,
+          vertical: AppSpacing.md + AppSpacing.xxs,
         ),
-        border: inputBorder,
-        enabledBorder: inputBorder,
-        focusedBorder: inputBorder.copyWith(
-          borderSide: BorderSide(color: primary, width: AppSizes.borderThick),
-        ),
-        errorBorder: inputBorder.copyWith(borderSide: BorderSide(color: error)),
-        focusedErrorBorder: inputBorder.copyWith(
-          borderSide: BorderSide(color: error, width: AppSizes.borderThick),
-        ),
+        border: inputBorder(AppColors.transparent),
+        enabledBorder: inputBorder(AppColors.transparent),
+        disabledBorder: inputBorder(AppColors.transparent),
+        focusedBorder: inputBorder(textPrimary, AppSizes.borderThick),
+        errorBorder: inputBorder(error),
+        focusedErrorBorder: inputBorder(error, AppSizes.borderThick),
         hintStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
         labelStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
         prefixIconColor: textSecondary,
@@ -159,21 +181,29 @@ abstract final class AppTheme {
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
+          side: BorderSide(color: outline),
         ),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surface,
         selectedColor: palette.solidFill,
+        showCheckmark: false,
         disabledColor: surfaceMuted,
-        side: BorderSide(color: outline),
-        shape: const StadiumBorder(),
+        side: WidgetStateBorderSide.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? BorderSide(color: palette.solidFill)
+              : BorderSide(color: outline),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+        ),
         labelStyle: textTheme.labelLarge?.copyWith(color: textPrimary),
         secondaryLabelStyle: textTheme.labelLarge?.copyWith(
-          color: AppColors.white,
+          color: palette.onSolidFill,
         ),
-        checkmarkColor: AppColors.white,
+        checkmarkColor: palette.onSolidFill,
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+          horizontal: AppSpacing.sm,
           vertical: AppSpacing.sm,
         ),
       ),
@@ -182,38 +212,47 @@ abstract final class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: AppColors.transparent,
         elevation: 0,
-        indicatorColor: primary.withValues(alpha: 0.14),
+        indicatorColor: palette.accent,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+        ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => textTheme.labelSmall?.copyWith(
+            letterSpacing: 0.2,
             color: states.contains(WidgetState.selected)
-                ? primary
+                ? textPrimary
                 : textSecondary,
           ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
+            size: AppSizes.iconMd,
             color: states.contains(WidgetState.selected)
-                ? primary
+                ? palette.onSolidFill
                 : textSecondary,
           ),
         ),
       ),
+      // A segmented control: an ink "thumb" sliding on a muted track.
       tabBarTheme: TabBarThemeData(
-        labelColor: AppColors.white,
+        labelColor: palette.onHero,
         unselectedLabelColor: textSecondary,
         labelStyle: textTheme.labelLarge,
         unselectedLabelStyle: textTheme.labelLarge,
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: AppColors.transparent,
+        overlayColor: const WidgetStatePropertyAll(AppColors.transparent),
+        splashFactory: NoSplash.splashFactory,
         indicator: BoxDecoration(
-          gradient: palette.brandGradient,
+          color: palette.hero,
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: textPrimary,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: background),
+        backgroundColor: palette.hero,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(color: palette.onHero),
+        actionTextColor: palette.accent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
@@ -222,15 +261,17 @@ abstract final class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: AppColors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.lg),
+          borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
+        iconColor: textSecondary,
         titleTextStyle: textTheme.titleLarge,
-        contentTextStyle: textTheme.bodyMedium,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(color: textSecondary),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         surfaceTintColor: AppColors.transparent,
         showDragHandle: true,
+        dragHandleColor: outline,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadius.xl),
@@ -246,7 +287,14 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(color: primary),
+      badgeTheme: BadgeThemeData(
+        backgroundColor: palette.accent,
+        textColor: palette.onSolidFill,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: textPrimary,
+        refreshBackgroundColor: surface,
+      ),
     );
   }
 }

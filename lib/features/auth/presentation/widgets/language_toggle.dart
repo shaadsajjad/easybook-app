@@ -5,7 +5,7 @@ import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
-/// A compact "EN | বাং" switch for the auth screens' gradient header.
+/// A compact "EN | বাং" segmented switch for the auth hero (on ink).
 /// The choice is saved by easy_localization.
 class LanguageToggle extends StatelessWidget {
   const new({super.key});
@@ -17,12 +17,11 @@ class LanguageToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
     return Semantics(
       label: LocaleKeys.auth_language.tr(),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: onGradient.withValues(alpha: 0.16),
+          color: context.palette.onHero.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Padding(
@@ -55,7 +54,6 @@ class _LanguageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onGradient = context.colors.onPrimary;
     return Semantics(
       button: true,
       selected: selected,
@@ -63,7 +61,8 @@ class _LanguageOption extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadius.pill),
         child: AnimatedContainer(
-          duration: AppDurations.fast,
+          duration: AppDurations.medium,
+          curve: AppMotion.standard,
           constraints: const BoxConstraints(
             minWidth: AppSizes.minTapTarget,
             minHeight: AppSizes.minTapTarget,
@@ -71,13 +70,15 @@ class _LanguageOption extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           decoration: BoxDecoration(
-            color: selected ? onGradient : null,
+            color: selected ? context.palette.accent : null,
             borderRadius: BorderRadius.circular(AppRadius.pill),
           ),
           child: Text(
             label,
             style: context.textTheme.labelLarge?.copyWith(
-              color: selected ? context.colors.primary : onGradient,
+              color: selected
+                  ? context.palette.onSolidFill
+                  : context.palette.onHeroMuted,
             ),
           ),
         ),

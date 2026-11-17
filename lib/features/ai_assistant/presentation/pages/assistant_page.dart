@@ -4,6 +4,7 @@ import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/responsive_center.dart';
 import 'package:easybook_app/features/ai_assistant/domain/entities/suggested_service.dart';
 import 'package:easybook_app/features/ai_assistant/presentation/bloc/chat_bloc.dart';
@@ -77,6 +78,16 @@ class AssistantView extends StatelessWidget {
                 onSend: (text) => bloc.add(ChatMessageSent(text)),
               ),
             ),
+            // Keep the input above the floating navigation bar (not needed
+            // while the keyboard is open: the bar is behind it then).
+            ColoredBox(
+              color: context.colors.surface,
+              child: SizedBox(
+                height: MediaQuery.viewInsetsOf(context).bottom > 0
+                    ? 0
+                    : MediaQuery.paddingOf(context).bottom,
+              ),
+            ),
           ],
         ),
       ),
@@ -102,10 +113,24 @@ class _Conversation extends StatelessWidget {
     final failure = state.failure;
     final items = <Widget>[
       for (final message in state.messages)
-        ChatBubble(message: message, onServiceTap: onServiceTap),
-      if (state.isTyping) const TypingIndicator(),
+        // Only the newest message animates in, sliding from its own side.
+        // Keyed by the message, so each one gets its entrance exactly once.
+        if (identical(message, state.messages.last))
+          FadeSlideIn(
+            key: ObjectKey(message),
+            axis: Axis.horizontal,
+            offset: message.isUser
+                ? AppMotion.entranceOffset * 2
+                : -AppMotion.entranceOffset * 2,
+            child: ChatBubble(message: message, onServiceTap: onServiceTap),
+          )
+        else
+          ChatBubble(message: message, onServiceTap: onServiceTap),
+      if (state.isTyping) const FadeSlideIn(child: TypingIndicator()),
       if (failure != null)
-        RetryBubble(message: failure.displayMessage, onRetry: onRetry),
+        FadeSlideIn(
+          child: RetryBubble(message: failure.displayMessage, onRetry: onRetry),
+        ),
     ].reversed.toList();
 
     return ListView.separated(

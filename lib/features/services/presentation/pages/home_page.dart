@@ -178,6 +178,10 @@ class _HomeViewState extends State<HomeView> {
                 horizontalPadding: inset,
                 onServiceTap: _openService,
               ),
+              // Room for the floating navigation bar.
+              SliverToBoxAdapter(
+                child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
+              ),
             ],
           ),
         ),

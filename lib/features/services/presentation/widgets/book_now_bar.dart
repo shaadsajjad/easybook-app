@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/utils/price_formatter.dart';
@@ -17,8 +18,11 @@ class BookNowBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(top: BorderSide(color: context.colors.outline)),
+        // An ink panel with rounded top corners.
+        color: context.palette.hero,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -47,14 +51,16 @@ class BookNowBar extends StatelessWidget {
                       children: [
                         Text(
                           LocaleKeys.services_starting_at.tr(),
-                          style: context.textTheme.bodySmall,
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.palette.onHeroMuted,
+                          ),
                         ),
                         Text(
                           PriceFormatter.format(
                             price,
                             locale: context.localeName,
                           ),
-                          style: context.textTheme.headlineSmall?.copyWith(
+                          style: context.textTheme.headlineMedium?.copyWith(
                             color: context.palette.accent,
                           ),
                         ),
@@ -66,7 +72,7 @@ class BookNowBar extends StatelessWidget {
                 Expanded(
                   child: AppButton(
                     label: LocaleKeys.services_book_now.tr(),
-                    icon: Icons.calendar_month_rounded,
+                    icon: AppIcons.calendar,
                     onPressed: onBook,
                   ),
                 ),

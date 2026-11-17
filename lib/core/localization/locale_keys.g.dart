@@ -182,6 +182,10 @@ abstract class LocaleKeys {
   static const profile_language = 'profile.language';
   static const profile_language_english = 'profile.language_english';
   static const profile_language_bengali = 'profile.language_bengali';
+  static const profile_appearance = 'profile.appearance';
+  static const profile_theme_system = 'profile.theme_system';
+  static const profile_theme_light = 'profile.theme_light';
+  static const profile_theme_dark = 'profile.theme_dark';
   static const profile_no_phone = 'profile.no_phone';
   static const profile_logout_subtitle = 'profile.logout_subtitle';
   static const profile_name_label = 'profile.name_label';

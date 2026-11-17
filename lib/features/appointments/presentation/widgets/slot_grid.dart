@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/date_formatter.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
+import 'package:easybook_app/core/widgets/fade_slide_in.dart';
 import 'package:easybook_app/core/widgets/inline_banner.dart';
 import 'package:easybook_app/core/widgets/skeleton.dart';
 import 'package:easybook_app/features/appointments/presentation/bloc/booking_cubit.dart';
@@ -54,7 +56,7 @@ class SlotGrid extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
                     onPressed: cubit.loadSlots,
-                    icon: const Icon(Icons.refresh_rounded),
+                    icon: const Icon(AppIcons.retry),
                     label: Text(LocaleKeys.common_retry.tr()),
                   ),
                 ),
@@ -67,11 +69,17 @@ class SlotGrid extends StatelessWidget {
             }
             return _Grid(
               children: [
-                for (final slot in availability.slots)
-                  _SlotChip(
-                    slot: slot,
-                    selected: slot == state.selectedSlot,
-                    onTap: () => cubit.selectSlot(slot),
+                for (final (index, slot) in availability.slots.indexed)
+                  FadeSlideIn(
+                    // New key per day, so a new day's slots animate in.
+                    key: ValueKey(slot.start),
+                    index: index,
+                    offset: AppSpacing.sm,
+                    child: _SlotChip(
+                      slot: slot,
+                      selected: slot == state.selectedSlot,
+                      onTap: () => cubit.selectSlot(slot),
+                    ),
                   ),
               ],
             );
@@ -121,7 +129,7 @@ class _SlotChip extends StatelessWidget {
     final enabled = slot.available;
     final Color textColor;
     if (selected) {
-      textColor = context.colors.onPrimary;
+      textColor = context.palette.onSolidFill;
     } else if (enabled) {
       textColor = context.colors.onSurface;
     } else {
@@ -139,29 +147,49 @@ class _SlotChip extends StatelessWidget {
         child: InkWell(
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(AppRadius.pill),
-          child: AnimatedContainer(
-            duration: AppDurations.fast,
-            constraints: const BoxConstraints(minHeight: AppSizes.minTapTarget),
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-            decoration: BoxDecoration(
-              gradient: selected ? context.palette.brandGradient : null,
-              color: selected
-                  ? null
-                  : enabled
-                  ? context.colors.surface
-                  : context.palette.surfaceMuted,
-              borderRadius: BorderRadius.circular(AppRadius.pill),
-              border: selected || !enabled
-                  ? null
-                  : Border.all(color: context.colors.outline),
-            ),
-            child: Text(
-              time,
-              textAlign: TextAlign.center,
-              style: context.textTheme.labelLarge?.copyWith(
-                color: textColor,
-                decoration: enabled ? null : TextDecoration.lineThrough,
+          child: AnimatedScale(
+            scale: selected ? 1.08 : 1,
+            duration: AppDurations.slow,
+            curve: AppMotion.pop,
+            child: AnimatedContainer(
+              duration: AppDurations.medium,
+              curve: AppMotion.standard,
+              constraints: const BoxConstraints(
+                minHeight: AppSizes.minTapTarget,
+              ),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: selected
+                    ? context.palette.solidFill
+                    : enabled
+                    ? context.colors.surface
+                    : context.palette.surfaceMuted,
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                border: Border.all(
+                  color: selected
+                      ? context.palette.solidFill
+                      : enabled
+                      ? context.colors.outline
+                      : context.palette.surfaceMuted,
+                ),
+                boxShadow: selected
+                    ? [
+                        BoxShadow(
+                          color: context.palette.glow,
+                          blurRadius: AppElevation.cardBlur,
+                          offset: const Offset(0, AppElevation.cardOffsetY),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Text(
+                time,
+                textAlign: TextAlign.center,
+                style: context.textTheme.labelLarge?.copyWith(
+                  color: textColor,
+                  decoration: enabled ? null : TextDecoration.lineThrough,
+                ),
               ),
             ),
           ),
@@ -186,7 +214,7 @@ class _NoSlots extends StatelessWidget {
       child: Column(
         children: [
           Icon(
-            Icons.event_busy_rounded,
+            AppIcons.cancelBooking,
             size: AppSizes.iconLg,
             color: context.palette.textSecondary,
           ),

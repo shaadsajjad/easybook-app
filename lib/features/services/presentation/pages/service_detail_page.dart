@@ -5,6 +5,7 @@ import 'package:easybook_app/core/di/injection.dart';
 import 'package:easybook_app/core/error/failures.dart';
 import 'package:easybook_app/core/localization/locale_keys.g.dart';
 import 'package:easybook_app/core/router/app_routes.dart';
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:easybook_app/core/widgets/empty_view.dart';
 import 'package:easybook_app/core/widgets/error_view.dart';
@@ -86,7 +87,7 @@ class _DetailError extends StatelessWidget {
   Widget build(BuildContext context) {
     if (failure is NotFoundFailure) {
       return EmptyView(
-        icon: Icons.search_off_rounded,
+        icon: AppIcons.noResults,
         title: LocaleKeys.services_not_found_title.tr(),
         message: LocaleKeys.services_not_found_message.tr(),
         actionLabel: LocaleKeys.services_back_home.tr(),

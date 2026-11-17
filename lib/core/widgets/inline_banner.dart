@@ -1,3 +1,4 @@
+import 'package:easybook_app/core/theme/app_icons.dart';
 import 'package:easybook_app/core/theme/app_spacing.dart';
 import 'package:easybook_app/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,8 @@ class InlineBanner extends StatelessWidget {
       InlineBannerTone.info => context.colors.primary,
     };
     final icon = switch (tone) {
-      InlineBannerTone.error => Icons.error_outline_rounded,
-      InlineBannerTone.info => Icons.info_outline_rounded,
+      InlineBannerTone.error => AppIcons.error,
+      InlineBannerTone.info => AppIcons.info,
     };
     return Semantics(
       liveRegion: true,
@@ -32,13 +33,14 @@ class InlineBanner extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppRadius.sm),
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: AppSizes.iconMd),
+            Icon(icon, color: color, size: AppSizes.iconSm + AppSpacing.xxs),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Text(
