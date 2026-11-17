@@ -76,7 +76,20 @@ android {
 
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
+            // Sign with the real release key when one is configured
+            // (android/key.properties or the ANDROID_KEYSTORE_* variables).
+            // Otherwise use the debug key, so anyone can build an
+            // installable APK for testing. Play Store uploads need the
+            // real key.
+            val hasReleaseKey =
+                keystorePropertiesFile.exists() ||
+                    System.getenv("ANDROID_KEYSTORE_PATH") != null
+            signingConfig =
+                if (hasReleaseKey) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android.txt"),

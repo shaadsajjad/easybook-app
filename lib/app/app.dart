@@ -27,6 +27,33 @@ class _AppState extends State<App> {
   // Created once, so locale changes keep the navigation stack.
   late final GoRouter _router = createAppRouter(_authBloc);
 
+  Locale? _locale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final locale = context.locale;
+    if (_locale != null && _locale != locale) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _rebuildEverything());
+    }
+    _locale = locale;
+  }
+
+  /// `tr()` reads the language from a global, so a widget that shows a
+  /// translated text does not know the language changed. After a switch,
+  /// mark every widget for one rebuild. Unlike replacing the tree, this
+  /// keeps all state (navigation, scroll position, the chat).
+  void _rebuildEverything() {
+    if (!mounted) return;
+    void rebuild(Element element) {
+      element
+        ..markNeedsBuild()
+        ..visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
+  }
+
   @override
   void dispose() {
     _router.dispose();
