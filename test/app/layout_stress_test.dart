@@ -250,7 +250,7 @@ List<_Screen> _screens() {
           BlocProvider<ServiceDetailCubit>.value(value: detail),
           BlocProvider<BookingCubit>.value(value: booking),
         ],
-        child: const BookingView(),
+        child: BookingView(serviceId: tService.id),
       ),
     ),
     (

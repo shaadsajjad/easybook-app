@@ -198,7 +198,6 @@ class _Dots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.palette;
     return ExcludeSemantics(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +214,13 @@ class _Dots extends StatelessWidget {
                   width: AppSpacing.xs + AppSpacing.md * t,
                   height: AppSpacing.xs,
                   decoration: BoxDecoration(
-                    color: Color.lerp(context.colors.outline, palette.hero, t),
+                    // Text colour: ink in light mode, near-white in dark
+                    // mode, so the current dot is visible in both.
+                    color: Color.lerp(
+                      context.colors.outline,
+                      context.colors.onSurface,
+                      t,
+                    ),
                     borderRadius: BorderRadius.circular(AppRadius.pill),
                   ),
                 );
