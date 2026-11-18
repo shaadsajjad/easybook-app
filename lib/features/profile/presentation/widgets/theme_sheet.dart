@@ -11,16 +11,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// Bottom sheet to pick the app theme: match the phone, light or dark.
 /// The sheet stays open, so the switch can be seen happening behind it.
 abstract final class ThemeSheet {
-  static String labelFor(ThemeMode mode) => switch (mode) {
-    ThemeMode.system => LocaleKeys.profile_theme_system.tr(),
-    ThemeMode.light => LocaleKeys.profile_theme_light.tr(),
-    ThemeMode.dark => LocaleKeys.profile_theme_dark.tr(),
+  static String labelFor(AppThemeMode mode) => switch (mode) {
+    AppThemeMode.system => LocaleKeys.profile_theme_system.tr(),
+    AppThemeMode.light => LocaleKeys.profile_theme_light.tr(),
+    AppThemeMode.dark => LocaleKeys.profile_theme_dark.tr(),
   };
 
-  static IconData iconFor(ThemeMode mode) => switch (mode) {
-    ThemeMode.system => AppIcons.themeSystem,
-    ThemeMode.light => AppIcons.themeLight,
-    ThemeMode.dark => AppIcons.themeDark,
+  static IconData iconFor(AppThemeMode mode) => switch (mode) {
+    AppThemeMode.system => AppIcons.themeSystem,
+    AppThemeMode.light => AppIcons.themeLight,
+    AppThemeMode.dark => AppIcons.themeDark,
   };
 
   static Future<void> show(BuildContext context) {
@@ -59,8 +59,8 @@ class _Body extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Row(
               children: [
-                for (final mode in ThemeMode.values) ...[
-                  if (mode != ThemeMode.values.first)
+                for (final mode in AppThemeMode.values) ...[
+                  if (mode != AppThemeMode.values.first)
                     const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: _Option(
@@ -83,7 +83,7 @@ class _Body extends StatelessWidget {
 class _Option extends StatelessWidget {
   const new({required this.mode, required this.selected, required this.onTap});
 
-  final ThemeMode mode;
+  final AppThemeMode mode;
   final bool selected;
   final VoidCallback onTap;
 

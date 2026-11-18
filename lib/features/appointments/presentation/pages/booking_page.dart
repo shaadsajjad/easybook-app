@@ -52,13 +52,16 @@ class BookingPage extends StatelessWidget {
           },
         ),
       ],
-      child: const BookingView(),
+      child: BookingView(serviceId: serviceId),
     );
   }
 }
 
 class BookingView extends StatefulWidget {
-  const new({super.key});
+  const new({required this.serviceId, super.key});
+
+  /// Used to retry loading the service if it failed.
+  final String serviceId;
 
   @override
   State<BookingView> createState() => _BookingViewState();
@@ -121,7 +124,7 @@ class _BookingViewState extends State<BookingView> {
                   ? ErrorView(
                       message: serviceState.failure?.displayMessage ?? '',
                       onRetry: () => context.read<ServiceDetailCubit>().load(
-                        context.read<BookingCubit>().serviceId,
+                        widget.serviceId,
                       ),
                     )
                   : const LoadingView();

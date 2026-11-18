@@ -71,13 +71,17 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => ThemeModeCubit()),
       ],
       // Light, dark or follow the phone, as picked in Profile > Appearance.
-      child: BlocBuilder<ThemeModeCubit, ThemeMode>(
+      child: BlocBuilder<ThemeModeCubit, AppThemeMode>(
         builder: (context, themeMode) => MaterialApp.router(
           onGenerateTitle: (_) => LocaleKeys.app_name.tr(),
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
-          themeMode: themeMode,
+          themeMode: switch (themeMode) {
+            AppThemeMode.system => ThemeMode.system,
+            AppThemeMode.light => ThemeMode.light,
+            AppThemeMode.dark => ThemeMode.dark,
+          },
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,

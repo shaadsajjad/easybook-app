@@ -32,6 +32,14 @@ The developer commits and pushes each branch. Each new branch starts from an up-
 | 9 | `chore/polish` | `chore: polish states, dark mode, a11y, Bengali review` |
 | 10 | `chore/release` | `docs: README, screenshots, release APK` |
 
+After the 10 steps (one branch each, same rules):
+
+| Branch | Commit |
+|---|---|
+| `feature/ui-redesign` | `feat: short booking numbers, restore calendar app icon` (the redesign, theme switcher, booking numbers) |
+| `feature/cache` | `feat: services cache, tab re-tap refresh, and system bar fixes` |
+| `docs/redesign-refresh` | `docs: refresh screenshots and docs after the redesign and cache` |
+
 ## 2. Design direction
 
 > Revised in the UI redesign (`feature/ui-redesign`). The first version (indigo/violet gradients, coral
@@ -66,24 +74,61 @@ Outlined everywhere; the filled variant marks the selected bottom-navigation tab
 **Motion toolkit** (`core/widgets`, tokens in `AppDurations` / `AppMotion`)
 - `AuroraBackground`: ink + three colored lights drifting on a 12 s loop + a faint dot grid.
 - `FadeSlideIn`: springy entrance (fade, rise, scale from 90% with overshoot), staggered by index.
-- `PressableScale`: squash on press, elastic bounce back.
+  Options (`animate`, `scaleFrom`, `curve`) let lists use a calm fade and rise instead: service
+  cards animate once per set of results and never replay while scrolling.
+- `PressableScale`: shrinks slightly on press and eases back; the press is cancelled as soon as the
+  finger moves, so cards don't squash while a list scrolls.
 - `PulseRings`: radar-like expanding rings (splash logo, success badge, avatar, typing, empty states).
 - `ConfettiBurst`: one-shot confetti with gravity and spin (booking confirmed).
 - `AppButton` primary: lime glow + a light sweep across it every few seconds.
 - `AppPageTransitionsBuilder` (`core/theme`): zoom + fade + rise between pages on Android;
   iOS keeps the native slide so swipe-back works.
-- `AppNavBar` (`app/shell`): floating ink bar, lime pill slides to the tab, icon pops and spins in.
+- `AppNavBar` (`app/shell`): floating, frosted see-through ink bar; a lime pill slides to the tab and
+  its icon pops in. It slides away after scrolling down about 24 dp and comes back after scrolling up
+  (small jitters ignored, always shown at the top). Tapping the current tab again refreshes it.
 - Feature motion: logo builds itself on the splash, featured carousel with 3D tilt + photo parallax +
   stretching dots, slot/date chips pop when picked, filter button spins lime, chat messages slide in
   from their side, send button pops when there is text, booking check draws itself.
 - Every effect respects the system "remove animations" setting (`MediaQuery.disableAnimationsOf`);
   widget tests run with it on (`test/helpers/pump_app.dart`) so `pumpAndSettle` settles.
 
+**Themes:** light, dark, or follow the phone (the default), picked in Profile > Appearance
+(`ThemeModeCubit` in `app/`, plain Dart). The choice is not saved yet: saving it needs a storage
+package such as `shared_preferences`, which needs approval first.
+
+**System bars:** every screen starts below a solid ink status bar strip with light icons
+(`app/status_bar_strip.dart`, set once in `MaterialApp.builder`, so no page handles it). The
+floating navigation bar sits above the Android keys or gesture handle, and on Android the area
+behind the system keys is filled so content never shows through. Pages scroll under the floating
+bar and add `MediaQuery.paddingOf(context).bottom` at the end so the last item clears it.
+
+**Booking numbers:** the API only has a UUID, so bookings show a short label such as `B-26047`
+(`core/utils/booking_reference.dart`): "B-", the year it was made, and three digits worked out from
+the id. It is stable on every device, display only (requests still use the real id), and not
+guaranteed unique. A real counter would have to come from the backend.
+
 **App logo:** an ink rounded square holding a lime calendar page; the header line, the gaps around the
 binder rings and the check mark are cut out. Flavors: production ink + lime, staging slate + white,
 development amber + white. Generated at 1024px by `tool/generate_icons.py` (Android mipmaps, adaptive
 icon with a monochrome themed icon, iOS `.icon` bundles, both launch screens). Inside the app the logo
 is drawn in code (`core/widgets/app_logo.dart`) and can animate its own construction (`progress`).
+
+## 2b. Caching (data layer only)
+
+Read-only, rarely changing data is cached in memory inside `ServicesRepositoryImpl`, using the small
+`core/cache/memory_cache.dart` helper (a value plus the time it was saved). Blocs and widgets never
+see the cache; they only pass `forceRefresh: true` through the use case on pull to refresh.
+
+| Data | Kept for | Key |
+|---|---|---|
+| Categories | 1 hour | (one value) |
+| Featured services | 5 minutes | (one value) |
+| Services list pages | 5 minutes | filter + page (a refresh clears all pages) |
+| Service detail | 5 minutes | service id |
+| Availability, bookings, profile, chat | never cached | changes often or is personal |
+
+Only successful answers are cached, so a failed call is simply retried next time. The catalog is the
+same for every user, so logout does not need to clear it. Times live in `AppConstants`.
 
 ## 3. Failure hierarchy (`core/error/failures.dart`)
 

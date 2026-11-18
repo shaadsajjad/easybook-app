@@ -19,8 +19,6 @@ class BookingCubit extends Cubit<BookingState> {
   final CreateAppointment _createAppointment;
   late final String _serviceId;
 
-  String get serviceId => _serviceId;
-
   // Only the newest availability request may update the screen (the user
   // can tap through days faster than the server answers).
   int _requestId = 0;

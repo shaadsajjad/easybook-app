@@ -1,10 +1,9 @@
 # EasyBook App (Flutter)
 
 ## Project context
-Mobile client for EasyBook, a service-booking app (72-hour technical assessment).
-Requirements: the assessment PDF (section 2: Frontend, UI/UX, Technical Requirements, plus Submission Requirements).
+Mobile client for EasyBook, a service-booking app.
 The backend is finished and deployed. The API contract is in ./docs/API.md. It is the single source of truth: never invent endpoints, fields, or behaviors that are not in it. If something is missing, ask.
-The developer will be interviewed on this code, so keep it simple, readable, and explainable.
+Keep the code simple, readable, and easy to explain.
 After finishing each step, summarize what was built and why. Do not build ahead of the step requested.
 The approved plan for every step is in ./docs/PLAN.md.
 

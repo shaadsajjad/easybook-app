@@ -6,7 +6,7 @@
 EasyBook is a mobile app for booking local services such as a haircut, a massage or a home
 cleaning. Users browse and search services, pick a free time slot, manage their bookings, and ask
 an AI assistant for recommendations. The app is available in **English and Bengali**, with
-**light and dark** themes.
+**light and dark** themes (follow the phone, or pick one in Profile).
 
 | | |
 |---|---|
@@ -30,12 +30,13 @@ an AI assistant for recommendations. The app is available in **English and Benga
 |---|---|---|---|
 | ![My bookings](docs/screenshots/05-my-bookings.png) | ![Booking detail](docs/screenshots/06-booking-detail.png) | ![Assistant](docs/screenshots/07-assistant-welcome.png) | ![Assistant chat](docs/screenshots/08-assistant-chat.png) |
 
-| Profile | বাংলা (Bengali) | Dark mode |
-|---|---|---|
-| ![Profile](docs/screenshots/09-profile.png) | ![Bengali](docs/screenshots/10-home-bengali.png) | ![Dark mode](docs/screenshots/11-home-dark.png) |
+| Profile | বাংলা (Bengali) | Dark mode | Appearance |
+|---|---|---|---|
+| ![Profile](docs/screenshots/09-profile.png) | ![Bengali](docs/screenshots/10-home-bengali.png) | ![Dark mode](docs/screenshots/11-home-dark.png) | ![Appearance](docs/screenshots/12-appearance.png) |
 
-All screenshots were taken from the production release APK on an Android emulator, against the
-live API.
+All screenshots were taken from a production release build on an Android emulator (Pixel, Android
+17, gesture navigation), logged in with the demo account, against the live API. Service and category
+names stay in English on the Bengali screen because the API sends them that way.
 
 ---
 
@@ -43,15 +44,23 @@ live API.
 
 - **Account:** register, log in (with a one-tap demo login), stay logged in across restarts, log out.
   An expired session sends the user back to login with an explanation.
-- **Services:** featured carousel, search as you type, category chips, price range filter, and
-  endless scrolling with pagination.
+- **Services:** featured carousel (swipe with a 3D tilt and photo parallax), search as you type,
+  category chips, price range filter, and endless scrolling with pagination. Changing a search or
+  filter shows skeleton cards until the new results arrive.
 - **Booking:** pick a day, see every time slot (booked or past ones are crossed out), add notes,
   confirm. If someone else takes the slot first, the app explains and reloads the free times.
 - **My bookings:** Upcoming and Past tabs, booking details, and cancelling (pending bookings only,
-  after a confirmation dialog).
-- **Profile:** edit name and phone (the email is locked), change password, switch language.
+  after a confirmation dialog). Each booking shows a short, easy-to-read number such as `B-26047`.
+- **Profile:** edit name and phone (the email is locked), change password, switch language, and
+  pick the appearance (match the phone, light or dark). Tapping the avatar on Home opens Profile.
 - **AI assistant:** chat about services. Replies show tappable chips that open the suggested
   service. The conversation is kept while you use other tabs.
+- **Navigation:** a floating, see-through bottom bar that slides away while you scroll down and comes
+  back when you scroll up. Tapping the tab you are already on scrolls to the top and refreshes it
+  (Home and My Bookings).
+- **Fast browsing:** services, categories and service details are cached in memory for a few
+  minutes, so going back and forth does not call the API every time. Pull to refresh always loads
+  fresh data.
 - **Every screen** handles loading (skeletons), empty, error (with retry) and success states.
 
 ---
@@ -78,8 +87,9 @@ presentation  ──▶  domain  ◀──  data
 lib/
 ├── main_development.dart / main_staging.dart / main_production.dart
 ├── bootstrap.dart                 shared start-up for every flavor
-├── app/                           MaterialApp.router, theme, localization, bottom-nav shell
+├── app/                           MaterialApp.router, theme mode, status bar strip, bottom-nav shell
 ├── core/
+│   ├── cache/                     small in-memory cache with a time limit (used by repositories)
 │   ├── config/                    flavors, AppConfig, Env (the only place with the API URL)
 │   ├── constants/                 API paths, limits and timeouts, storage keys
 │   ├── di/                        get_it registrations, grouped by feature
@@ -87,10 +97,10 @@ lib/
 │   ├── network/                   Dio client, auth interceptor, error mapping, response envelope
 │   ├── router/                    go_router routes and the auth redirect
 │   ├── storage/                   secure token storage
-│   ├── theme/                     colors, text styles, spacing, light and dark themes
+│   ├── theme/                     colors, text styles, spacing, icons, page transitions, themes
 │   ├── localization/              generated translation keys
 │   ├── utils/                     date, price, duration formatters, validators
-│   └── widgets/                   shared widgets (button, text field, empty/error views, …)
+│   └── widgets/                   shared widgets (button, text field, empty/error views, motion, …)
 └── features/
     ├── auth/                      splash, login, register, session
     ├── services/                  home, search, filters, detail, availability
@@ -126,8 +136,9 @@ The widget shows the API's own message, which is already user-friendly.
 | Images | `cached_network_image` | Caches service photos; shows a shimmer while loading. |
 | Lints | `very_good_analysis` + `bloc_lint` | Strict analysis, zero issues. |
 
-No other packages were added. The debounce for search, the skeleton shimmer and the logo are
-small pieces of in-house code.
+No other packages were added. The search debounce, the skeleton shimmer, the logo, the cache and
+every animation (aurora background, entrances, confetti, pulse rings, page transitions) are small
+pieces of in-house code in `core/`.
 
 ---
 
@@ -150,6 +161,18 @@ small pieces of in-house code.
   the choice so the user can retry.
 - **Lists stay current.** Creating or cancelling a booking broadcasts a change, and My Bookings
   reloads both tabs.
+- **Caching in the data layer only.** `ServicesRepositoryImpl` keeps categories for an hour and
+  featured services, list pages (per search, filter and page) and service details for 5 minutes
+  (`core/cache/memory_cache.dart`). Blocs only pass `forceRefresh: true` on pull to refresh.
+  Failures are never cached. Availability, bookings and the profile are never cached, because they
+  change all the time or are personal. The services catalog is the same for every user, so the cache
+  does not need clearing on logout.
+- **System bars.** Every screen starts below a solid status bar strip
+  (`app/status_bar_strip.dart`, set once in `MaterialApp.builder`). The floating navigation bar sits
+  above the Android keys or gesture handle, and on Android the area behind the system keys is
+  filled, so scrolling content never shows through them.
+- **Motion with care.** Every animation is skipped when the phone's "remove animations" setting is
+  on. List cards animate once per set of results and never replay while scrolling.
 - **Waking the server.** The splash screen calls `GET /health` right away and explains the wait if
   the free server is asleep. Network timeouts are 60 s for that reason.
 - **Language switch without losing state.** `tr()` reads a global, so after a language change the
@@ -159,8 +182,9 @@ small pieces of in-house code.
   go_router, easy_localization and flutter_localizations still use the SDK's
   `package:flutter/material.dart`. Mixing two Material libraries gives two different `MaterialApp`
   and `Theme` types, so the app uses the SDK one everywhere.
-- **Design system.** All colors, text styles, spacing and sizes live in `core/theme`. Status colors
-  are always paired with a text label.
+- **Design system.** All colors, text styles, spacing, sizes, durations and icons live in
+  `core/theme` (see the design section of [`docs/PLAN.md`](docs/PLAN.md)). Status colors are always
+  paired with a text label.
 
 ---
 
@@ -171,9 +195,9 @@ installed side by side:
 
 | Flavor | App name | Android id | Icon | Entry point |
 |---|---|---|---|---|
-| production | EasyBook | `com.shaad.easybook` | indigo | `lib/main_production.dart` |
-| staging | EasyBook Staging | `com.shaad.easybook.stg` | slate | `lib/main_staging.dart` |
-| development | EasyBook Dev | `com.shaad.easybook.dev` | teal | `lib/main_development.dart` |
+| production | EasyBook | `com.shaad.easybook` | ink + lime | `lib/main_production.dart` |
+| staging | EasyBook Staging | `com.shaad.easybook.stg` | slate + white | `lib/main_staging.dart` |
+| development | EasyBook Dev | `com.shaad.easybook.dev` | amber + white | `lib/main_development.dart` |
 
 The API base URL is written in **one place**, [`lib/core/config/env.dart`](lib/core/config/env.dart).
 All flavors currently use the production API. To use a local backend, change only
@@ -231,11 +255,12 @@ flutter analyze
 dart run bloc_tools:bloc lint .
 ```
 
-- **315 tests** in 47 files, **84% line coverage**, `flutter analyze` and `bloc lint` at zero
+- **336 tests** in 51 files, **84% line coverage**, `flutter analyze` and `bloc lint` at zero
   issues.
 - Every bloc and cubit (success, failure and key transitions such as debounce, paging, stale
   answers, 409 reload, retry), every repository (success and each failure mapping), the network
-  layer (envelope parsing, error mapping, 401 handling), formatters and validators.
+  layer (envelope parsing, error mapping, 401 handling), the cache (expiry, force refresh, failures
+  not cached, availability never cached), formatters and validators.
 - Widget tests for shared widgets and the main forms.
 - [`test/app/layout_stress_test.dart`](test/app/layout_stress_test.dart) renders all 13 main
   screens on an iPhone SE-sized screen, in dark mode, at 200% text size, in English and in real
@@ -246,16 +271,17 @@ dart run bloc_tools:bloc lint .
 
 ## App icon
 
-[`tool/generate_icons.py`](tool/generate_icons.py) draws the logo (a calendar with a coral check)
-and writes every Android and iOS icon size, the Android adaptive icon, and both launch screens.
-Each flavor gets its own background color. Re-run it after changing the logo:
+[`tool/generate_icons.py`](tool/generate_icons.py) draws the logo (a lime calendar on ink, with the
+check mark cut out) and writes every Android and iOS icon size, the Android adaptive icon (with a
+themed monochrome version), and both launch screens. Each flavor gets its own colors. Re-run it
+after changing the logo:
 
 ```sh
 python3 tool/generate_icons.py   # needs Pillow
 ```
 
 Inside the app the same logo is drawn in code (`core/widgets/app_logo.dart`), so it is sharp at
-every size.
+every size; on the splash screen it builds itself piece by piece.
 
 ---
 
